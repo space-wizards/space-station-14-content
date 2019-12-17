@@ -1,6 +1,7 @@
 ﻿using Content.Server.GameObjects.EntitySystems;
 using Content.Shared.GameObjects.Components.Mobs;
 using Robust.Server.GameObjects;
+using Robust.Shared.GameObjects;
 using Robust.Shared.Interfaces.GameObjects;
 
 namespace Content.Server.GameObjects
@@ -61,7 +62,7 @@ namespace Content.Server.GameObjects
         {
             return true;
         }
-        
+
         bool IActionBlocker.CanEmote()
         {
             return true;
@@ -112,7 +113,7 @@ namespace Content.Server.GameObjects
         {
             return false;
         }
-        
+
         bool IActionBlocker.CanEmote()
         {
             return false;
@@ -183,7 +184,7 @@ namespace Content.Server.GameObjects
         {
             return false;
         }
-        
+
         bool IActionBlocker.CanEmote()
         {
             return false;

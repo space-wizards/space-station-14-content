@@ -390,7 +390,7 @@ namespace Content.Server.GameObjects.EntitySystems
             }
 
             // Check if ClickLocation is in object bounds here, if not lets log as warning and see why
-            if (attacked.TryGetComponent(out ICollidableComponent collideComp))
+            if (attacked.TryGetComponent(out CollidableComponent collideComp))
             {
                 if (!collideComp.WorldAABB.Contains(coordinates.ToWorld(_mapManager).Position))
                 {

@@ -74,7 +74,7 @@ namespace Content.Server.GameObjects.Components
                 // only items that can be stored in an inventory, or a player, can be eaten by a locker
                 if(!entity.HasComponent<StoreableComponent>() && !entity.HasComponent<IActorComponent>())
                     continue;
-                
+
                 if (!AddToContents(entity))
                 {
                     continue;
@@ -106,7 +106,7 @@ namespace Content.Server.GameObjects.Components
 
         private void ModifyComponents()
         {
-            if (Owner.TryGetComponent<ICollidableComponent>(out var collidableComponent))
+            if (Owner.TryGetComponent<CollidableComponent>(out var collidableComponent))
             {
                 collidableComponent.CollisionEnabled = IsCollidableWhenOpen || !Open;
             }
@@ -124,8 +124,8 @@ namespace Content.Server.GameObjects.Components
 
         private bool AddToContents(IEntity entity)
         {
-            var collidableComponent = Owner.GetComponent<ICollidableComponent>();
-            if(entity.TryGetComponent<ICollidableComponent>(out var entityCollidableComponent))
+            var collidableComponent = Owner.GetComponent<CollidableComponent>();
+            if(entity.TryGetComponent<CollidableComponent>(out var entityCollidableComponent))
             {
                 if(MaxSize < entityCollidableComponent.WorldAABB.Size.X
                     || MaxSize < entityCollidableComponent.WorldAABB.Size.Y)

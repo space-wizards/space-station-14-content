@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Content.Server.GameObjects.Components.Projectiles;
 using Content.Server.GameObjects.EntitySystems;
 using Content.Shared.GameObjects;
@@ -41,7 +42,7 @@ namespace Content.Server.GameObjects.Components
             // This would allow ricochets off walls, and weird gravity effects from slowing the object.
             if (collidedwith.Count > 0 && Owner.TryGetComponent(out CollidableComponent body) && body.PhysicsShapes.Count >= 1)
             {
-                body.PhysicsShapes[0].CollisionMask &= (int)~CollisionGroup.MobImpassable;
+                body.PhysicsShapes.First().CollisionMask &= (int)~CollisionGroup.MobImpassable;
                 body.IsScrapingFloor = true;
 
                 // KYS, your job is finished. Trigger ILand as well.

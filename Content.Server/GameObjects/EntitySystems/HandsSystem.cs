@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Content.Server.GameObjects.Components;
 using Content.Server.GameObjects.Components.Stack;
 using Content.Server.Interfaces.GameObjects;
@@ -126,7 +127,7 @@ namespace Content.Server.GameObjects.EntitySystems
 
             if (!_entitySystemManager.GetEntitySystem<InteractionSystem>().TryDroppedInteraction(ent, handsComp.GetActiveHand.Owner))
                 return false;
-                
+
             if(handsComp.GetActiveHand != null && !_entitySystemManager.GetEntitySystem<InteractionSystem>().TryDroppedInteraction(ent, handsComp.GetActiveHand.Owner))
             	return false;
 
@@ -196,7 +197,7 @@ namespace Content.Server.GameObjects.EntitySystems
                 if(colComp.PhysicsShapes.Count == 0)
                     colComp.PhysicsShapes.Add(new PhysShapeAabb());
 
-                colComp.PhysicsShapes[0].CollisionMask |= (int)CollisionGroup.MobImpassable;
+                colComp.PhysicsShapes.First().CollisionMask |= (int)CollisionGroup.MobImpassable;
                 colComp.IsScrapingFloor = false;
             }
 
