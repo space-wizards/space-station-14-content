@@ -244,6 +244,11 @@ namespace Content.Shared.GameObjects.Components.Body.Part
             return true;
         }
 
+        public bool HasMechanism(IMechanism mechanism)
+        {
+            return _mechanisms.Contains(mechanism);
+        }
+
         public bool RemoveMechanism(IMechanism mechanism)
         {
             DebugTools.AssertNotNull(mechanism);

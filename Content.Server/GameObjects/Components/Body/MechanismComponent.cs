@@ -12,7 +12,6 @@ using Robust.Server.GameObjects;
 using Robust.Server.Player;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Localization;
-using Robust.Shared.Utility;
 using Robust.Shared.ViewVariables;
 
 namespace Content.Server.GameObjects.Components.Body
@@ -42,91 +41,87 @@ namespace Content.Server.GameObjects.Components.Body
             }
 
             CloseAllSurgeryUIs();
-            OptionsCache.Clear();
-            PerformerCache = null;
-            BodyCache = null;
+            Performer = null;
+            SelectedBody = null;
 
             if (eventArgs.Target.TryGetComponent(out IBody? body))
             {
-                SendBodyPartListToUser(eventArgs, body);
+                SendParts(eventArgs, body);
             }
-            else if (eventArgs.Target.TryGetComponent<IBodyPart>(out var part))
+            else if (eventArgs.Target.TryGetComponent<IBodyPart>(out var part) &&
+                     !part.TryAddMechanism(this))
             {
-                DebugTools.AssertNotNull(part);
-
-                if (!part.TryAddMechanism(this))
-                {
-                    eventArgs.Target.PopupMessage(eventArgs.User, Loc.GetString("You can't fit it in!"));
-                }
+                eventArgs.Target.PopupMessage(eventArgs.User, Loc.GetString("You can't fit it in!"));
             }
 
             return true;
         }
 
-        private void SendBodyPartListToUser(AfterInteractEventArgs eventArgs, IBody body)
+        private void SendParts(AfterInteractEventArgs eventArgs, IBody body)
         {
-            // Create dictionary to send to client (text to be shown : data sent back if selected)
             var toSend = new Dictionary<string, int>();
 
             foreach (var (key, value) in body.Parts)
             {
-                // For each limb in the target, add it to our cache if it is a valid option.
                 if (value.CanAddMechanism(this))
                 {
-                    OptionsCache.Add(IdHash, value);
                     toSend.Add(key + ": " + value.Name, IdHash++);
                 }
             }
 
-            if (OptionsCache.Count > 0 &&
-                eventArgs.User.TryGetComponent(out IActorComponent? actor))
+            if (eventArgs.User.TryGetComponent(out IActorComponent? actor))
             {
                 OpenSurgeryUI(actor.playerSession);
-                UpdateSurgeryUIBodyPartRequest(actor.playerSession, toSend);
-                PerformerCache = eventArgs.User;
-                BodyCache = body;
+                UpdateSurgeryUI(actor.playerSession, toSend);
+                Performer = eventArgs.User;
             }
-            else // If surgery cannot be performed, show message saying so.
+            else
             {
                 eventArgs.Target.PopupMessage(eventArgs.User,
                     Loc.GetString("You see no way to install the {0}.", Owner.Name));
             }
         }
 
+        private void NotUsefulPopup(IEntity entity)
+        {
+            entity.PopupMessage(entity,
+                Loc.GetString("You see no useful way to use the {0} anymore.", Owner.Name));
+        }
+
         /// <summary>
         ///     Called after the client chooses from a list of possible BodyParts that can be operated on.
         /// </summary>
-        private void HandleReceiveBodyPart(int key)
+        private void HandlePart(int index)
         {
-            if (PerformerCache == null ||
-                !PerformerCache.TryGetComponent(out IActorComponent? actor))
+            if (Performer == null ||
+                !Performer.TryGetComponent(out IActorComponent? actor) ||
+                actor.playerSession.AttachedEntity == null)
             {
                 return;
             }
 
             CloseSurgeryUI(actor.playerSession);
 
-            if (BodyCache == null)
-            {
-                return;
-            }
-
             // TODO: sanity checks to see whether user is in range, user is still able-bodied, target is still the same, etc etc
-            if (!OptionsCache.TryGetValue(key, out var targetObject))
+            if (SelectedBody == null)
             {
-                BodyCache.Owner.PopupMessage(PerformerCache,
-                    Loc.GetString("You see no useful way to use the {0} anymore.", Owner.Name));
+                NotUsefulPopup(Performer);
                 return;
             }
 
-            var target = (IBodyPart) targetObject;
-            var message = target.TryAddMechanism(this)
-                ? Loc.GetString("You jam {0:theName} inside {1:them}.", Owner, PerformerCache)
+            if (SelectedBody.Parts.Count <= index)
+            {
+                NotUsefulPopup(Performer);
+                return;
+            }
+
+            var selectedPart = SelectedBody.PartAt(index).Value;
+            var message = selectedPart.TryAddMechanism(this)
+                ? Loc.GetString("You jam {0:theName} inside {1:them}.", Owner, Performer)
                 : Loc.GetString("You can't fit it in!");
+            var popupEntity = selectedPart.Body?.Owner ?? Performer;
 
-            BodyCache.Owner.PopupMessage(PerformerCache, message);
-
-            // TODO: {1:theName}
+            popupEntity.PopupMessage(Performer, message);
         }
 
         private void OpenSurgeryUI(IPlayerSession session)
@@ -134,7 +129,7 @@ namespace Content.Server.GameObjects.Components.Body
             UserInterface?.Open(session);
         }
 
-        private void UpdateSurgeryUIBodyPartRequest(IPlayerSession session, Dictionary<string, int> options)
+        private void UpdateSurgeryUI(IPlayerSession session, Dictionary<string, int> options)
         {
             UserInterface?.SendMessage(new RequestBodyPartSurgeryUIMessage(options), session);
         }
@@ -153,8 +148,8 @@ namespace Content.Server.GameObjects.Components.Body
         {
             switch (message.Message)
             {
-                case ReceiveBodyPartSurgeryUIMessage msg:
-                    HandleReceiveBodyPart(msg.SelectedOptionId);
+                case ReceivePartMessage msg:
+                    HandlePart(msg.SelectedOptionId);
                     break;
             }
         }

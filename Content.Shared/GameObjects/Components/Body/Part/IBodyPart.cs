@@ -90,6 +90,13 @@ namespace Content.Shared.GameObjects.Components.Body.Part
         bool TryAddMechanism(IMechanism mechanism, bool force = false);
 
         /// <summary>
+        ///     Checks if this part has the given mechanism.
+        /// </summary>
+        /// <param name="mechanism">The mechanism to check for.</param>
+        /// <returns>true if it does, false otherwise.</returns>
+        bool HasMechanism(IMechanism mechanism);
+
+        /// <summary>
         ///     Tries to remove the given <see cref="mechanism"/> from this
         ///     <see cref="IBodyPart"/>.
         /// </summary>
