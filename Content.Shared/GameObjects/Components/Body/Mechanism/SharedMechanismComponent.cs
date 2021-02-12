@@ -17,9 +17,6 @@ namespace Content.Shared.GameObjects.Components.Body.Mechanism
     {
         public override string Name => "Mechanism";
 
-        protected int IdHash;
-        protected IBody? SelectedBody;
-        protected IEntity? Performer;
         private IBodyPart? _part;
         private readonly Dictionary<Type, IMechanismBehavior> _behaviors = new();
 

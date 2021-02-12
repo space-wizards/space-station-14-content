@@ -27,10 +27,6 @@ namespace Content.Server.GameObjects.Components.Body.Part
     [ComponentReference(typeof(IBodyPart))]
     public class BodyPartComponent : SharedBodyPartComponent, IAfterInteract
     {
-        private readonly Dictionary<int, object> _optionsCache = new();
-        private IBody? _owningBodyCache;
-        private int _idHash;
-        private IEntity? _surgeonCache;
         private Container _mechanismContainer = default!;
 
         [ViewVariables] private BoundUserInterface? UserInterface => Owner.GetUIOrNull(SurgeryUIKey.Key);
@@ -139,7 +135,6 @@ namespace Content.Server.GameObjects.Components.Body.Part
                         continue;
                     }
 
-                    _optionsCache.Add(_idHash, slot);
                     toSend.Add(slot, _idHash++);
                 }
             }
