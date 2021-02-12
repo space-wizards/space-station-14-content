@@ -46,7 +46,6 @@
         public const uint GHOST = 1039;
         public const uint MICROWAVE = 1040;
         public const uint GRAVITY_GENERATOR = 1041;
-        public const uint SURGERY = 1042;
         public const uint MULTITOOLS = 1043;
         public const uint PDA = 1044;
         public const uint PATHFINDER_DEBUG = 1045;

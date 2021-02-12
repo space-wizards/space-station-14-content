@@ -33,9 +33,6 @@
       <DependentUpon>OptionsMenu.cs</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="GameObjects\Components\Body\Surgery" />
-  </ItemGroup>
 
   <Import Project="..\RobustToolbox\MSBuild\XamlIL.targets" />
   <Import Project="..\RobustToolbox\MSBuild\Robust.Analyzers.targets" />

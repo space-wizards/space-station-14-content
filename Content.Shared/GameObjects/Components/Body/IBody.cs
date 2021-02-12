@@ -14,7 +14,7 @@ namespace Content.Shared.GameObjects.Components.Body
     ///     Component representing a collection of <see cref="IBodyPart"/>s
     ///     attached to each other.
     /// </summary>
-    public interface IBody : IComponent, IBodyPartContainer
+    public interface IBody : IComponent
     {
         /// <summary>
         ///     The name of the <see cref="BodyTemplatePrototype"/> used by this

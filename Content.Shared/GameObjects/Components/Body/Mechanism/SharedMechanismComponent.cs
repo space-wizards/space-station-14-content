@@ -69,7 +69,6 @@ namespace Content.Shared.GameObjects.Components.Body.Mechanism
 
         public int DestroyThreshold { get; set; }
 
-        // TODO BODY: Surgery description and adding a message to the examine tooltip of the entity that owns this mechanism
         // TODO BODY
         public int Resistance { get; set; }
 

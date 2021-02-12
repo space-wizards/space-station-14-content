@@ -1,13 +1,12 @@
 ﻿#nullable enable
 using System.Collections.Generic;
 using Content.Shared.GameObjects.Components.Body.Mechanism;
-using Content.Shared.GameObjects.Components.Body.Surgery;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 
 namespace Content.Shared.GameObjects.Components.Body.Part
 {
-    public interface IBodyPart : IComponent, IBodyPartContainer
+    public interface IBodyPart : IComponent
     {
         /// <summary>
         ///     The <see cref="IBody"/> to which this <see cref="IBodyPart"/> is
@@ -47,21 +46,6 @@ namespace Content.Shared.GameObjects.Components.Body.Part
         ///     The symmetry of this <see cref="IBodyPart"/>.
         /// </summary>
         public BodyPartSymmetry Symmetry { get; }
-
-        /// <summary>
-        ///     Checks if the given <see cref="SurgeryType"/> can be used on
-        ///     the current state of this <see cref="IBodyPart"/>.
-        /// </summary>
-        /// <returns>True if it can be used, false otherwise.</returns>
-        bool SurgeryCheck(SurgeryType surgery);
-
-        /// <summary>
-        ///     Attempts to perform surgery on this <see cref="IBodyPart"/> with the given
-        ///     tool.
-        /// </summary>
-        /// <returns>True if successful, false if there was an error.</returns>
-        public bool AttemptSurgery(SurgeryType toolType, IBodyPartContainer target, ISurgeon surgeon,
-            IEntity performer);
 
         /// <summary>
         ///     Checks if another <see cref="IBodyPart"/> can be connected to this one.
