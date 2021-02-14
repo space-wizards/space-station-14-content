@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Content.Shared.GameObjects.Components.Body.Mechanism;
+using Content.Shared.GameObjects.Components.Body.Surgery;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
 using Robust.Shared.Map;
@@ -86,6 +87,9 @@ namespace Content.Shared.GameObjects.Components.Body.Part
 
         [ViewVariables]
         public BodyPartSymmetry Symmetry { get; private set; }
+
+        // TODO BODY: serialize
+        private List<SurgeryTag> _surgeryTags = new();
 
         protected virtual void OnAddMechanism(IMechanism mechanism)
         {
@@ -258,6 +262,30 @@ namespace Content.Shared.GameObjects.Components.Body.Part
             }
 
             mechanism.Owner.Delete();
+            return true;
+        }
+
+        public bool AddSurgeryTag(SurgeryTag tag)
+        {
+            _surgeryTags.Add(tag);
+            return true;
+        }
+
+        public bool HasSurgeryTag(SurgeryTag tag)
+        {
+            return _surgeryTags.Contains(tag);
+        }
+
+        public bool RemoveSurgeryTag(SurgeryTag tag)
+        {
+            var index = _surgeryTags.LastIndexOf(tag);
+
+            if (index == -1)
+            {
+                return false;
+            }
+
+            _surgeryTags.RemoveAt(index);
             return true;
         }
 

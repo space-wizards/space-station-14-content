@@ -243,6 +243,7 @@ namespace Content.Client
             "SolutionTransfer",
             "Shovel",
             "ReagentTank",
+            "SurgeryTool",
         };
     }
 }

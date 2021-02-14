@@ -1,0 +1,4 @@
+﻿<cc:SS14Window Title="Surgery" xmlns:cc="clr-namespace:Robust.Client.UserInterface.CustomControls;assembly=Robust.Client"
+               xmlns:uic="clr-namespace:Robust.Client.UserInterface.Controls;assembly=Robust.Client">
+    <uic:VBoxContainer Name="Parts" SeparationOverride="4"/>
+</cc:SS14Window>

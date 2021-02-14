@@ -3,9 +3,6 @@
   id: BaseSurgeryTool
   abstract: true
   components:
-  - type: SurgeryTool
-    surgeryType: Incision
-    baseOperateTime: 5
   - type: UserInterface
     interfaces:
     - key: enum.SurgeryUIKey.Key
@@ -18,8 +15,10 @@
   description: A surgical tool used to make incisions into flesh.
   components:
   - type: SurgeryTool
-    surgeryType: Incision
-    baseOperateTime: 3
+    behavior:
+      !type:StepSurgery
+      step: Incision
+    delay: 3
   - type: Sprite
     sprite: Objects/Specific/Medical/surgery_tools.rsi
     state: scalpel
@@ -33,8 +32,10 @@
   description: A surgical tool used to hold open incisions.
   components:
   - type: SurgeryTool
-    surgeryType: Retraction
-    baseOperateTime: 3
+    behavior:
+      !type:StepSurgery
+      step: Retraction
+    delay: 3
   - type: Sprite
     sprite: Objects/Specific/Medical/surgery_tools.rsi
     state: retractor
@@ -48,8 +49,10 @@
   description: A surgical tool used to cauterize open wounds.
   components:
   - type: SurgeryTool
-    surgeryType: Cauterization
-    baseOperateTime: 3
+    behavior:
+      !type:StepSurgery
+      step: Cauterization
+    delay: 3
   - type: Sprite
     sprite: Objects/Specific/Medical/surgery_tools.rsi
     state: cautery
@@ -63,8 +66,10 @@
   description: A surgical drill for making holes into hard material.
   components:
   - type: SurgeryTool
-    surgeryType: Drilling
-    baseOperateTime: 3
+    behavior:
+      !type:StepSurgery
+      step: Drilling
+    delay: 3
   - type: Sprite
     sprite: Objects/Specific/Medical/surgery_tools.rsi
     state: drill
@@ -78,8 +83,10 @@
   description: A surgical tool used to cauterize open wounds.
   components:
   - type: SurgeryTool
-    surgeryType: Amputation
-    baseOperateTime: 3
+    behavior:
+      !type:StepSurgery
+      step: Amputation
+    delay: 3
   - type: Sprite
     sprite: Objects/Specific/Medical/surgery_tools.rsi
     state: bone_saw
@@ -93,8 +100,10 @@
   description: A surgical tool used to compress blood vessels to prevent bleeding.
   components:
   - type: SurgeryTool
-    surgeryType: VesselCompression
-    baseOperateTime: 3
+    behavior:
+      !type:StepSurgery
+      step: VesselCompression
+    delay: 3
   - type: Sprite
     sprite: Objects/Specific/Medical/surgery_tools.rsi
     state: hemostat

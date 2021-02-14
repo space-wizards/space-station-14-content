@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System.Collections.Generic;
 using Content.Shared.GameObjects.Components.Body.Mechanism;
+using Content.Shared.GameObjects.Components.Body.Surgery;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 
@@ -107,6 +108,12 @@ namespace Content.Shared.GameObjects.Components.Body.Part
         ///     false otherwise.
         /// </returns>
         bool DeleteMechanism(IMechanism mechanism);
+
+        bool AddSurgeryTag(SurgeryTag tag);
+
+        bool HasSurgeryTag(SurgeryTag tag);
+
+        bool RemoveSurgeryTag(SurgeryTag tag);
 
         /// <summary>
         ///     Gibs the body part.
