@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System.Threading.Tasks;
 using Content.Server.GameObjects.EntitySystems;
+using Content.Server.GameObjects.EntitySystems.DoAfter;
 using Content.Server.Utility;
 using Content.Shared.GameObjects.Components.Body;
 using Content.Shared.GameObjects.Components.Body.Part;
@@ -29,7 +30,7 @@ namespace Content.Server.GameObjects.Components.Body.Surgery
             }
         }
 
-        private void OnUIMessage(ServerBoundUserInterfaceMessage message)
+        private async void OnUIMessage(ServerBoundUserInterfaceMessage message)
         {
             switch (message.Message)
             {
@@ -49,19 +50,42 @@ namespace Content.Server.GameObjects.Components.Body.Surgery
                         return;
                     }
 
-                    var attachedEntity = message.Session.AttachedEntity;
-                    if (attachedEntity == null)
+                    var performer = message.Session.AttachedEntity;
+                    if (performer == null)
                     {
                         return;
                     }
 
                     var surgerySystem = EntitySystem.Get<SurgerySystem>();
-                    if (!surgerySystem.TrySetPerformer(attachedEntity, part))
+                    if (!surgerySystem.TrySetPerformer(performer, part))
                     {
                         return;
                     }
 
-                    Behavior.Perform(attachedEntity, part);
+                    var doAfterSystem = EntitySystem.Get<DoAfterSystem>();
+
+                    if (Delay > 0)
+                    {
+                        var result = await doAfterSystem.DoAfter(new DoAfterEventArgs(performer, Delay, target: partEntity)
+                        {
+                            BreakOnDamage = true,
+                            BreakOnStun = true,
+                            BreakOnTargetMove = true,
+                            BreakOnUserMove = true,
+                            NeedHand = true
+                        });
+
+
+                        if (result == DoAfterStatus.Finished)
+                        {
+                            Behavior.Perform(performer, part);
+                        }
+                    }
+                    else
+                    {
+                        Behavior.Perform(performer, part);
+                    }
+
                     break;
             }
         }
