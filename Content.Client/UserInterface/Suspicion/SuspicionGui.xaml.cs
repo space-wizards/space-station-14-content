@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -15,8 +15,6 @@ using Robust.Shared.Localization;
 using Robust.Shared.Maths;
 using Robust.Shared.Timing;
 using static Robust.Client.UserInterface.Controls.BaseButton;
-
-#nullable enable
 
 namespace Content.Client.UserInterface.Suspicion
 {
@@ -35,7 +33,7 @@ namespace Content.Client.UserInterface.Suspicion
             IoCManager.InjectDependencies(this);
 
             RoleButton.OnPressed += RoleButtonPressed;
-            RoleButton.CustomMinimumSize = (200, 60);
+            RoleButton.MinSize = (200, 60);
         }
 
         private void RoleButtonPressed(ButtonEventArgs obj)
@@ -51,13 +49,14 @@ namespace Content.Client.UserInterface.Suspicion
             }
 
             var allies = string.Join(", ", role.Allies.Select(tuple => tuple.name));
-            var message = role.Allies.Count switch
-            {
-                0 => Loc.GetString("You have no allies"),
-                var n => Loc.GetPluralString("Your ally is {0}", "Your allies are {0}", n, allies),
-            };
 
-            role.Owner.PopupMessage(message);
+            role.Owner.PopupMessage(
+                Loc.GetString(
+                    "suspicion-ally-count-display",
+                    ("allyCount", role.Allies.Count),
+                    ("allyNames", allies)
+                )
+            );
         }
 
         private bool TryGetComponent([NotNullWhen(true)] out SuspicionRoleComponent? suspicion)

@@ -13,7 +13,7 @@ using Robust.Shared.IoC;
 using Robust.Shared.Localization;
 using Robust.Shared.Maths;
 using Robust.Shared.Prototypes;
-using Robust.Shared.Utility;
+using static Robust.Client.UserInterface.Controls.BaseButton;
 
 namespace Content.Client.GameObjects.Components.PDA
 {
@@ -23,12 +23,11 @@ namespace Content.Client.GameObjects.Components.PDA
         [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
         [Dependency] private readonly IUserInterfaceManager _userInterfaceManager = default!;
 
-        private PDAMenu _menu;
-        private PDAMenuPopup _failPopup;
+        private PDAMenu? _menu;
+        private PDAMenuPopup? _failPopup;
 
         public PDABoundUserInterface(ClientUserInterfaceComponent owner, object uiKey) : base(owner, uiKey)
         {
-
         }
 
         protected override void Open()
@@ -38,17 +37,17 @@ namespace Content.Client.GameObjects.Components.PDA
             _menu = new PDAMenu(this, _prototypeManager);
             _menu.OpenToLeft();
             _menu.OnClose += Close;
-            _menu.FlashLightToggleButton.OnToggled += args =>
+            _menu.FlashLightToggleButton.OnToggled += _ =>
             {
                 SendMessage(new PDAToggleFlashlightMessage());
             };
 
-            _menu.EjectIDButton.OnPressed += args =>
+            _menu.EjectIDButton.OnPressed += _ =>
             {
                 SendMessage(new PDAEjectIDMessage());
             };
 
-            _menu.EjectPenButton.OnPressed += args =>
+            _menu.EjectPenButton.OnPressed += _ =>
             {
                 SendMessage(new PDAEjectPenMessage());
             };
@@ -62,9 +61,9 @@ namespace Content.Client.GameObjects.Components.PDA
                 }
             };
 
-            _menu.OnListingButtonPressed += (args, listing) =>
+            _menu.OnListingButtonPressed += (_, listing) =>
             {
-                if (_menu.CurrentLoggedInAccount.DataBalance < listing.Price)
+                if (_menu.CurrentLoggedInAccount?.DataBalance < listing.Price)
                 {
                     _failPopup = new PDAMenuPopup(Loc.GetString("Insufficient funds!"));
                     _userInterfaceManager.ModalRoot.AddChild(_failPopup);
@@ -78,7 +77,7 @@ namespace Content.Client.GameObjects.Components.PDA
                 SendMessage(new PDAUplinkBuyListingMessage(listing.ItemId));
             };
 
-            _menu.OnCategoryButtonPressed += (args, category) =>
+            _menu.OnCategoryButtonPressed += (_, category) =>
             {
                 _menu.CurrentFilterCategory = category;
                 SendMessage(new PDARequestUpdateInterfaceMessage());
@@ -89,15 +88,23 @@ namespace Content.Client.GameObjects.Components.PDA
         protected override void UpdateState(BoundUserInterfaceState state)
         {
             base.UpdateState(state);
-            DebugTools.Assert(state is PDAUBoundUserInterfaceState);
+
+            if (_menu == null)
+            {
+                return;
+            }
 
             switch (state)
             {
                 case PDAUpdateState msg:
                 {
                     _menu.FlashLightToggleButton.Pressed = msg.FlashlightEnabled;
-                    _menu.PDAOwnerLabel.SetMarkup(Loc.GetString("Owner: [color=white]{0}[/color]",
-                        msg.PDAOwnerInfo.ActualOwnerName));
+
+                    if (msg.PDAOwnerInfo.ActualOwnerName != null)
+                    {
+                        _menu.PDAOwnerLabel.SetMarkup(Loc.GetString("Owner: [color=white]{0}[/color]",
+                            msg.PDAOwnerInfo.ActualOwnerName));
+                    }
 
                     if (msg.PDAOwnerInfo.JobTitle == null || msg.PDAOwnerInfo.IdOwner == null)
                     {
@@ -113,6 +120,7 @@ namespace Content.Client.GameObjects.Components.PDA
 
                     _menu.EjectIDButton.Visible = msg.PDAOwnerInfo.IdOwner != null;
                     _menu.EjectPenButton.Visible = msg.HasPen;
+
                     if (msg.Account != null)
                     {
                         _menu.CurrentLoggedInAccount = msg.Account;
@@ -130,6 +138,7 @@ namespace Content.Client.GameObjects.Components.PDA
                             _menu.AddListingGui(item);
                         }
                     }
+
                     _menu.MasterTabContainer.SetTabVisible(1, msg.Account != null);
                     break;
                 }
@@ -221,8 +230,6 @@ namespace Content.Client.GameObjects.Components.PDA
 
         private class PDAMenu : SS14Window
         {
-            protected override Vector2? CustomSize => (512, 256);
-
             private PDABoundUserInterface _owner { get; }
 
             public Button FlashLightToggleButton { get; }
@@ -245,8 +252,8 @@ namespace Content.Client.GameObjects.Components.PDA
 
             public readonly VBoxContainer CategoryListContainer;
             public readonly RichTextLabel BalanceInfo;
-            public event Action<BaseButton.ButtonEventArgs, UplinkListingData> OnListingButtonPressed;
-            public event Action<BaseButton.ButtonEventArgs, UplinkCategory> OnCategoryButtonPressed;
+            public event Action<ButtonEventArgs, UplinkListingData>? OnListingButtonPressed;
+            public event Action<ButtonEventArgs, UplinkCategory>? OnCategoryButtonPressed;
 
             public UplinkCategory CurrentFilterCategory
             {
@@ -262,19 +269,19 @@ namespace Content.Client.GameObjects.Components.PDA
                 }
             }
 
-            public UplinkAccountData CurrentLoggedInAccount
+            public UplinkAccountData? CurrentLoggedInAccount
             {
                 get => _loggedInUplinkAccount;
                 set => _loggedInUplinkAccount = value;
             }
 
-
             private UplinkCategory _currentFilter;
-            private UplinkAccountData _loggedInUplinkAccount;
-
+            private UplinkAccountData? _loggedInUplinkAccount;
 
             public PDAMenu(PDABoundUserInterface owner, IPrototypeManager prototypeManager)
             {
+                MinSize = SetSize = (512, 256);
+
                 _owner = owner;
                 _prototypeManager = prototypeManager;
                 Title = Loc.GetString("PDA");
@@ -287,20 +294,20 @@ namespace Content.Client.GameObjects.Components.PDA
 
                 IDInfoLabel = new RichTextLabel()
                 {
-                    SizeFlagsHorizontal = SizeFlags.FillExpand,
+                    HorizontalExpand = true,
                 };
 
                 EjectIDButton = new Button
                 {
                     Text = Loc.GetString("Eject ID"),
-                    SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
-                    SizeFlagsVertical = SizeFlags.ShrinkCenter
+                    HorizontalAlignment = HAlignment.Center,
+                    VerticalAlignment = VAlignment.Center
                 };
                 EjectPenButton = new Button
                 {
                     Text = Loc.GetString("Eject Pen"),
-                    SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
-                    SizeFlagsVertical = SizeFlags.ShrinkCenter
+                    HorizontalAlignment = HAlignment.Center,
+                    VerticalAlignment = VAlignment.Center
                 };
 
                 var innerHBoxContainer = new HBoxContainer
@@ -315,7 +322,6 @@ namespace Content.Client.GameObjects.Components.PDA
 
                 IDInfoContainer = new PanelContainer
                 {
-                    SizeFlagsHorizontal = SizeFlags.Fill,
                     Children =
                     {
                         innerHBoxContainer,
@@ -330,9 +336,9 @@ namespace Content.Client.GameObjects.Components.PDA
 
                 var mainMenuTabContainer = new VBoxContainer
                 {
-                    SizeFlagsVertical = SizeFlags.FillExpand,
-                    SizeFlagsHorizontal = SizeFlags.FillExpand,
-                    CustomMinimumSize = (50, 50),
+                    VerticalExpand = true,
+                    HorizontalExpand = true,
+                    MinSize = (50, 50),
 
                     Children =
                     {
@@ -352,36 +358,36 @@ namespace Content.Client.GameObjects.Components.PDA
 
                 BalanceInfo = new RichTextLabel
                 {
-                    SizeFlagsHorizontal = SizeFlags.ShrinkCenter,
+                    HorizontalAlignment = HAlignment.Center,
                 };
 
                 //Red background container.
                 var masterPanelContainer = new PanelContainer
                 {
                     PanelOverride = new StyleBoxFlat { BackgroundColor = Color.Black },
-                    SizeFlagsVertical = SizeFlags.FillExpand
+                    VerticalExpand = true
                 };
 
                 //This contains both the panel of the category buttons and the listings box.
                 CategoryAndListingsContainer = new HSplitContainer
                 {
-                    SizeFlagsVertical = SizeFlags.FillExpand,
+                    VerticalExpand = true,
                 };
 
 
                 var uplinkShopScrollContainer = new ScrollContainer
                 {
-                    SizeFlagsHorizontal = SizeFlags.FillExpand,
-                    SizeFlagsVertical = SizeFlags.FillExpand,
+                    HorizontalExpand = true,
+                    VerticalExpand = true,
                     SizeFlagsStretchRatio = 2,
-                    CustomMinimumSize = (100, 256)
+                    MinSize = (100, 256)
                 };
 
                 //Add the category list to the left side. The store items to center.
                 var categoryListContainerBackground = new PanelContainer
                 {
                     PanelOverride = new StyleBoxFlat { BackgroundColor = Color.Gray.WithAlpha(0.02f) },
-                    SizeFlagsVertical = SizeFlags.FillExpand,
+                    VerticalExpand = true,
                     Children =
                     {
                         CategoryListContainer
@@ -395,16 +401,16 @@ namespace Content.Client.GameObjects.Components.PDA
                 //Actual list of buttons for buying a listing from the uplink.
                 UplinkListingsContainer = new VBoxContainer
                 {
-                    SizeFlagsHorizontal = SizeFlags.FillExpand,
-                    SizeFlagsVertical = SizeFlags.FillExpand,
+                    HorizontalExpand = true,
+                    VerticalExpand = true,
                     SizeFlagsStretchRatio = 2,
-                    CustomMinimumSize = (100, 256),
+                    MinSize = (100, 256),
                 };
                 uplinkShopScrollContainer.AddChild(UplinkListingsContainer);
 
                 var innerVboxContainer = new VBoxContainer
                 {
-                    SizeFlagsVertical = SizeFlags.FillExpand,
+                    VerticalExpand = true,
 
                     Children =
                     {
@@ -463,7 +469,7 @@ namespace Content.Client.GameObjects.Components.PDA
 
             public void AddListingGui(UplinkListingData listing)
             {
-                if (!_prototypeManager.TryIndex(listing.ItemId, out EntityPrototype prototype) || listing.Category != CurrentFilterCategory)
+                if (!_prototypeManager.TryIndex(listing.ItemId, out EntityPrototype? prototype) || listing.Category != CurrentFilterCategory)
                 {
                     return;
                 }
@@ -472,8 +478,8 @@ namespace Content.Client.GameObjects.Components.PDA
                 {
                     Text = listing.ListingName == string.Empty ? prototype.Name : listing.ListingName,
                     ToolTip = listing.Description == string.Empty ? prototype.Description : listing.Description,
-                    SizeFlagsHorizontal = SizeFlags.FillExpand,
-                    Modulate = _loggedInUplinkAccount.DataBalance >= listing.Price
+                    HorizontalExpand = true,
+                    Modulate = _loggedInUplinkAccount?.DataBalance >= listing.Price
                     ? Color.White
                     : Color.Gray.WithAlpha(0.30f)
                 };
@@ -481,8 +487,8 @@ namespace Content.Client.GameObjects.Components.PDA
                 var priceLabel = new Label
                 {
                     Text = $"{listing.Price} TC",
-                    SizeFlagsHorizontal = SizeFlags.ShrinkEnd,
-                    Modulate = _loggedInUplinkAccount.DataBalance >= listing.Price
+                    HorizontalAlignment = HAlignment.Right,
+                    Modulate = _loggedInUplinkAccount?.DataBalance >= listing.Price
                     ? weightedColor
                     : Color.Gray.WithAlpha(0.30f)
                 };
@@ -490,8 +496,7 @@ namespace Content.Client.GameObjects.Components.PDA
                 //Padding for the price lable.
                 var pricePadding = new HBoxContainer
                 {
-                    CustomMinimumSize = (32, 1),
-                    SizeFlagsHorizontal = SizeFlags.Fill,
+                    MinSize = (32, 1),
                 };
 
                 //Contains the name of the item and its price. Used for spacing item name and price.
@@ -513,10 +518,8 @@ namespace Content.Client.GameObjects.Components.PDA
                     }
                 };
 
-                var pdaUplinkListingButton = new PDAUplinkItemButton
+                var pdaUplinkListingButton = new PDAUplinkItemButton(listing)
                 {
-                    ButtonListing = listing,
-                    SizeFlagsVertical = SizeFlags.Fill,
                     Children =
                     {
                         listingButtonPanelContainer
@@ -534,7 +537,12 @@ namespace Content.Client.GameObjects.Components.PDA
 
             private sealed class PDAUplinkItemButton : ContainerButton
             {
-                public UplinkListingData ButtonListing;
+                public PDAUplinkItemButton(UplinkListingData data)
+                {
+                    ButtonListing = data;
+                }
+
+                public UplinkListingData ButtonListing { get; }
             }
 
             private sealed class PDAUplinkCategoryButton : Button

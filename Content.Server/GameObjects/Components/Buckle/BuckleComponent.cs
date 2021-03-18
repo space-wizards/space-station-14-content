@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Content.Server.GameObjects.Components.GUI;
@@ -13,7 +13,6 @@ using Content.Shared.GameObjects.Components.Strap;
 using Content.Shared.GameObjects.EntitySystems.ActionBlocker;
 using Content.Shared.GameObjects.Verbs;
 using Content.Shared.Interfaces;
-using Content.Shared.Interfaces.GameObjects.Components;
 using Content.Shared.Utility;
 using Robust.Server.GameObjects;
 using Robust.Shared.Containers;
@@ -22,15 +21,18 @@ using Robust.Shared.IoC;
 using Robust.Shared.Localization;
 using Robust.Shared.Maths;
 using Robust.Shared.Players;
-using Robust.Shared.Serialization;
+using Robust.Shared.Serialization.Manager.Attributes;
 using Robust.Shared.Timing;
 using Robust.Shared.ViewVariables;
 
 namespace Content.Server.GameObjects.Components.Buckle
 {
+    /// <summary>
+    ///     Component that handles sitting entities into <see cref="StrapComponent"/>s.
+    /// </summary>
     [RegisterComponent]
     [ComponentReference(typeof(SharedBuckleComponent))]
-    public class BuckleComponent : SharedBuckleComponent, IInteractHand
+    public class BuckleComponent : SharedBuckleComponent
     {
         [Dependency] private readonly IGameTiming _gameTiming = default!;
 
@@ -39,14 +41,16 @@ namespace Content.Server.GameObjects.Components.Buckle
         [ComponentDependency] private readonly StunnableComponent? _stunnable = null;
         [ComponentDependency] private readonly MobStateComponent? _mobState = null;
 
-        private int _size;
+        [DataField("size")]
+        private int _size = 100;
 
         /// <summary>
         ///     The amount of time that must pass for this entity to
         ///     be able to unbuckle after recently buckling.
         /// </summary>
+        [DataField("delay")]
         [ViewVariables]
-        private TimeSpan _unbuckleDelay;
+        private TimeSpan _unbuckleDelay  = TimeSpan.FromSeconds(0.25f);
 
         /// <summary>
         ///     The time that this entity buckled at.
@@ -163,11 +167,6 @@ namespace Content.Server.GameObjects.Components.Buckle
 
             if (!to.TryGetComponent(out strap))
             {
-                var message = Loc.GetString(Owner == user
-                    ? "You can't buckle yourself there!"
-                    : "You can't buckle {0:them} there!", Owner);
-                Owner.PopupMessage(user, message);
-
                 return false;
             }
 
@@ -235,9 +234,9 @@ namespace Content.Server.GameObjects.Components.Buckle
             return true;
         }
 
-        public override bool TryBuckle(IEntity user, IEntity to)
+        public override bool TryBuckle(IEntity? user, IEntity to)
         {
-            if (!CanBuckle(user, to, out var strap))
+            if (user == null || !CanBuckle(user, to, out var strap))
             {
                 return false;
             }
@@ -334,7 +333,8 @@ namespace Content.Server.GameObjects.Components.Buckle
 
             Appearance?.SetData(BuckleVisuals.Buckled, false);
 
-            if (_stunnable != null && _stunnable.KnockedDown)
+            if (_stunnable != null && _stunnable.KnockedDown
+                || (_mobState?.IsIncapacitated() ?? false))
             {
                 EntitySystem.Get<StandingStateSystem>().Down(Owner);
             }
@@ -379,19 +379,6 @@ namespace Content.Server.GameObjects.Components.Buckle
             return TryBuckle(user, to);
         }
 
-        public override void ExposeData(ObjectSerializer serializer)
-        {
-            base.ExposeData(serializer);
-
-            serializer.DataField(ref _size, "size", 100);
-
-            serializer.DataReadWriteFunction(
-                "cooldown",
-                0.25f,
-                seconds => _unbuckleDelay = TimeSpan.FromSeconds(seconds),
-                () => (float) _unbuckleDelay.TotalSeconds);
-        }
-
         protected override void Startup()
         {
             base.Startup();
@@ -421,11 +408,6 @@ namespace Content.Server.GameObjects.Components.Buckle
             }
 
             return new BuckleComponentState(Buckled, drawDepth, LastEntityBuckledTo, DontCollide);
-        }
-
-        bool IInteractHand.InteractHand(InteractHandEventArgs eventArgs)
-        {
-            return TryUnbuckle(eventArgs.User);
         }
 
         public void Update()

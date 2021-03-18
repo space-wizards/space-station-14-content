@@ -7,14 +7,14 @@ namespace Content.Server.AI.Utility
 {
     public static class UtilityAiHelpers
     {
-        public static Blackboard GetBlackboard(IEntity entity)
+        public static Blackboard? GetBlackboard(IEntity entity)
         {
-            if (!entity.TryGetComponent(out AiControllerComponent aiControllerComponent))
+            if (!entity.TryGetComponent(out AiControllerComponent? aiControllerComponent))
             {
                 return null;
             }
 
-            if (aiControllerComponent.Processor is UtilityAi utilityAi)
+            if (aiControllerComponent is UtilityAi utilityAi)
             {
                 return utilityAi.Blackboard;
             }

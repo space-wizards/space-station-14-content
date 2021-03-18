@@ -25,13 +25,13 @@ namespace Content.Client.GameObjects.Components.HUD.Inventory
         private readonly Dictionary<Slots, List<ItemSlotButton>> _inventoryButtons
             = new();
 
-        private ItemSlotButton _hudButtonPocket1;
-        private ItemSlotButton _hudButtonPocket2;
-        private ItemSlotButton _hudButtonBelt;
-        private ItemSlotButton _hudButtonBack;
-        private ItemSlotButton _hudButtonId;
-        private Control _rightQuickButtonsContainer;
-        private Control _leftQuickButtonsContainer;
+        private ItemSlotButton _hudButtonPocket1 = default!;
+        private ItemSlotButton _hudButtonPocket2 = default!;
+        private ItemSlotButton _hudButtonBelt = default!;
+        private ItemSlotButton _hudButtonBack = default!;
+        private ItemSlotButton _hudButtonId = default!;
+        private Control _rightQuickButtonsContainer = default!;
+        private Control _leftQuickButtonsContainer = default!;
 
         public HumanInventoryInterfaceController(ClientInventoryComponent owner) : base(owner)
         {
@@ -47,7 +47,7 @@ namespace Content.Client.GameObjects.Components.HUD.Inventory
             {
                 button.OnPressed = (e) => AddToInventory(e, slot);
                 button.OnStoragePressed = (e) => OpenStorage(e, slot);
-                button.OnHover = (e) => RequestItemHover(slot);
+                button.OnHover = (_) => RequestItemHover(slot);
                 _inventoryButtons.Add(slot, new List<ItemSlotButton> {button});
             }
 
@@ -59,7 +59,7 @@ namespace Content.Client.GameObjects.Components.HUD.Inventory
                 {
                     OnPressed = (e) => AddToInventory(e, slot),
                     OnStoragePressed = (e) => OpenStorage(e, slot),
-                    OnHover = (e) => RequestItemHover(slot)
+                    OnHover = (_) => RequestItemHover(slot)
                 };
                 _inventoryButtons[slot].Add(variable);
             }
@@ -87,14 +87,14 @@ namespace Content.Client.GameObjects.Components.HUD.Inventory
                     _hudButtonPocket1,
                     _hudButtonPocket2,
                     // keeps this "balanced" with the left, so the hands will appear perfectly in the center
-                    new Control{CustomMinimumSize = (64, 64)}
+                    new Control{MinSize = (64, 64)}
                 },
                 SeparationOverride = 5
             };
         }
 
-        public override SS14Window Window => _window;
-        private HumanInventoryWindow _window;
+        public override SS14Window? Window => _window;
+        private HumanInventoryWindow? _window;
 
         public override IEnumerable<ItemSlotButton> GetItemSlotButtons(Slots slot)
         {
@@ -152,7 +152,7 @@ namespace Content.Client.GameObjects.Components.HUD.Inventory
 
         protected override void HandleInventoryKeybind(GUIBoundKeyEventArgs args, Slots slot)
         {
-            if (!_inventoryButtons.TryGetValue(slot, out var buttons))
+            if (!_inventoryButtons.ContainsKey(slot))
                 return;
             if (!Owner.TryGetSlot(slot, out var item))
                 return;
@@ -226,7 +226,7 @@ namespace Content.Client.GameObjects.Components.HUD.Inventory
                 const int width = ButtonSize * 4 + ButtonSeparation * 3 + RightSeparation;
                 const int height = ButtonSize * 4 + ButtonSeparation * 3;
 
-                var windowContents = new LayoutContainer {CustomMinimumSize = (width, height)};
+                var windowContents = new LayoutContainer {MinSize = (width, height)};
                 Contents.AddChild(windowContents);
 
                 void AddButton(Slots slot, string textureName, Vector2 position)

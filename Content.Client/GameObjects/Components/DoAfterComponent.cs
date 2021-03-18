@@ -1,8 +1,9 @@
-#nullable enable
 using System;
 using System.Collections.Generic;
 using Content.Client.GameObjects.EntitySystems.DoAfter;
 using Content.Shared.GameObjects.Components;
+using Robust.Client.UserInterface;
+using Robust.Client.UserInterface.Controls;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
 using Robust.Shared.Network;
@@ -51,10 +52,10 @@ namespace Content.Client.GameObjects.Components
         /// </summary>
         public void Enable()
         {
-            if (Gui != null && !Gui.Disposed)
+            if (Gui?.Disposed == false)
                 return;
 
-            Gui = new DoAfterGui {AttachedEntity = Owner, FirstDraw = true};
+            Gui = new DoAfterGui {AttachedEntity = Owner};
 
             foreach (var (_, doAfter) in _doAfters)
             {
@@ -70,6 +71,7 @@ namespace Content.Client.GameObjects.Components
         public void Disable()
         {
             Gui?.Dispose();
+            Gui = null;
         }
 
         public override void HandleComponentState(ComponentState? curState, ComponentState? nextState)
@@ -128,8 +130,7 @@ namespace Content.Client.GameObjects.Components
         /// <param name="clientDoAfter"></param>
         public void Remove(ClientDoAfter clientDoAfter)
         {
-            if (_doAfters.ContainsKey(clientDoAfter.ID))
-                _doAfters.Remove(clientDoAfter.ID);
+            _doAfters.Remove(clientDoAfter.ID);
 
             var found = false;
 

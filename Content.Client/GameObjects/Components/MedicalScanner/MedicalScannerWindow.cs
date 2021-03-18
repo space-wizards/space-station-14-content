@@ -14,10 +14,10 @@ namespace Content.Client.GameObjects.Components.MedicalScanner
     {
         public readonly Button ScanButton;
         private readonly Label _diagnostics;
-        protected override Vector2? CustomSize => (485, 90);
-
         public MedicalScannerWindow()
         {
+            SetSize = (250, 100);
+
             Contents.AddChild(new VBoxContainer
             {
                 Children =
@@ -44,6 +44,7 @@ namespace Content.Client.GameObjects.Components.MedicalScanner
             {
                 _diagnostics.Text = Loc.GetString("No patient data.");
                 ScanButton.Disabled = true;
+                SetSize = (250, 100);
             }
             else
             {
@@ -68,6 +69,8 @@ namespace Content.Client.GameObjects.Components.MedicalScanner
 
                 _diagnostics.Text = text.ToString();
                 ScanButton.Disabled = state.IsScanned;
+
+                SetSize = (250, 575);
             }
         }
     }
