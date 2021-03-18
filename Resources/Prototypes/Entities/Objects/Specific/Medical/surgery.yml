@@ -22,7 +22,8 @@
   components:
   - type: SurgeryTool
     behavior:
-      !type:Cauterization
+      !type:StepSurgery
+      step: Cauterization
     delay: 3
   - type: Sprite
     sprite: Objects/Specific/Medical/Surgery/cautery.rsi
@@ -42,7 +43,8 @@
 #  - type: PowerCellSlot
   - type: SurgeryTool
     behavior:
-      !type:Drilling
+      !type:StepSurgery
+      step: Drilling
     delay: 3
   - type: Sprite
     sprite: Objects/Specific/Medical/Surgery/drill.rsi
@@ -66,7 +68,8 @@
     - Knife
   - type: SurgeryTool
     behavior:
-      !type:Incision
+      !type:StepSurgery
+      step: Incision
     delay: 5
   - type: Sprite
     sprite: Objects/Specific/Medical/Surgery/scalpel.rsi
@@ -86,7 +89,8 @@
   components:
   - type: SurgeryTool
     behavior:
-      !type:Incision
+      !type:StepSurgery
+      step: Incision
     delay: 8
   - type: Sprite
     state: shiv
@@ -101,7 +105,8 @@
   components:
   - type: SurgeryTool
     behavior:
-      !type:Incision
+      !type:StepSurgery
+      step: Incision
     delay: 4
   - type: Sprite
     state: advanced
@@ -117,7 +122,8 @@
 #  - type: PowerCellSlot
   - type: SurgeryTool
     behavior:
-      !type:Incision
+      !type:StepSurgery
+      step: Incision
     delay: 2
   - type: Sprite
     state: laser
@@ -134,7 +140,8 @@
   components:
   - type: SurgeryTool
     behavior:
-      !type:Retraction
+      !type:StepSurgery
+      step: Retraction
     delay: 3
   - type: Sprite
     sprite: Objects/Specific/Medical/Surgery/scissors.rsi
@@ -162,7 +169,8 @@
   components:
   - type: SurgeryTool
     behavior:
-      !type:VesselCompression
+      !type:StepSurgery
+      step: VesselCompression
     delay: 3
   - type: Sprite
     state: hemostat
@@ -195,7 +203,8 @@
       - Knife
   - type: SurgeryTool
     behavior:
-      !type:Amputation
+      !type:StepSurgery
+      step: Amputation
     delay: 6
   - type: Sprite
     sprite: Objects/Specific/Medical/Surgery/saw.rsi
@@ -213,7 +222,8 @@
   components:
   - type: SurgeryTool
     behavior:
-      !type:Amputation
+      !type:StepSurgery
+      step: Amputation
     delay: 8
   - type: Sprite
     state: improv
@@ -232,7 +242,8 @@
 #  - type: PowerCellSlot
   - type: SurgeryTool
     behavior:
-      !type:Amputation
+      !type:StepSurgery
+      step: Amputation
     delay: 4
   - type: Sprite
     state: electric
@@ -251,7 +262,8 @@
 #  - type: PowerCellSlot
   - type: SurgeryTool
     behavior:
-      !type:Amputation
+      !type:StepSurgery
+      step: Amputation
     delay: 2
   - type: Sprite
     state: advanced
