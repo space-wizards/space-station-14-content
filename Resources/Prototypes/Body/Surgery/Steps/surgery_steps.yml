@@ -1,8 +1,5 @@
 ﻿- type: surgeryStep
-  id: Incision
-
-- type: surgeryStep
-  id: Retraction
+  id: Amputation
 
 - type: surgeryStep
   id: Cauterization
@@ -11,7 +8,10 @@
   id: Drilling
 
 - type: surgeryStep
-  id: Amputation
+  id: Incision
+
+- type: surgeryStep
+  id: Retraction
 
 - type: surgeryStep
   id: VesselCompression
