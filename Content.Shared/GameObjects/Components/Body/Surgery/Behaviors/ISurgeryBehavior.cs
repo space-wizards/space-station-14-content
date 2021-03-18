@@ -1,10 +1,11 @@
 ﻿using Content.Shared.GameObjects.Components.Body.Part;
 using Robust.Shared.GameObjects;
-using Robust.Shared.Serialization;
+using Robust.Shared.Serialization.Manager.Attributes;
 
 namespace Content.Shared.GameObjects.Components.Body.Surgery.Behaviors
 {
-    public interface ISurgeryBehavior : IExposeData
+    [ImplicitDataDefinitionForInheritors]
+    public interface ISurgeryBehavior
     {
         bool Perform(IEntity performer, IBodyPart part);
     }

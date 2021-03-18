@@ -2,7 +2,7 @@
 using Content.Shared.GameObjects.Components.Body.Surgery.Behaviors;
 using JetBrains.Annotations;
 using Robust.Shared.GameObjects;
-using Robust.Shared.Serialization;
+using Robust.Shared.Serialization.Manager.Attributes;
 
 namespace Content.Shared.GameObjects.Components.Body.Surgery
 {
@@ -10,16 +10,10 @@ namespace Content.Shared.GameObjects.Components.Body.Surgery
     {
         public override string Name => "SurgeryTool";
 
+        [DataField("behavior")]
         public ISurgeryBehavior? Behavior { get; [UsedImplicitly] private set; }
 
+        [DataField("delay")]
         public float Delay { get; [UsedImplicitly] private set; }
-
-        public override void ExposeData(ObjectSerializer serializer)
-        {
-            base.ExposeData(serializer);
-
-            serializer.DataField(this, x => x.Behavior, "behavior", null);
-            serializer.DataField(this, x => x.Delay, "delay", 0);
-        }
     }
 }
