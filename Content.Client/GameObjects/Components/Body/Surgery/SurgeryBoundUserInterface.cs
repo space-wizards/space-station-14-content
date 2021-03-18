@@ -1,6 +1,6 @@
-﻿using Content.Shared.GameObjects.Components.Body.Surgery;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Content.Shared.GameObjects.Components.Body.Part;
+using Content.Shared.GameObjects.Components.Body.Surgery;
 using JetBrains.Annotations;
 using Robust.Client.GameObjects;
 using Robust.Shared.GameObjects;
@@ -59,6 +59,11 @@ namespace Content.Client.GameObjects.Components.Body.Surgery
             }
 
             _window.UpdateParts(parts);
+
+            foreach (var button in _window.PartButtons)
+            {
+                button.OnPressed += OnPressed;
+            }
         }
 
         private void OnPressed(ButtonEventArgs args)
