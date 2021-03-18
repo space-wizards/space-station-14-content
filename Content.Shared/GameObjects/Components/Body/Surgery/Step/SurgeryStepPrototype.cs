@@ -1,5 +1,4 @@
-﻿using Content.Shared.Interfaces;
-using Robust.Shared.GameObjects;
+﻿using Robust.Shared.GameObjects;
 using Robust.Shared.Localization;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.Manager.Attributes;
@@ -13,18 +12,6 @@ namespace Content.Shared.GameObjects.Components.Body.Surgery.Step
         [ViewVariables]
         [field: DataField("id", required: true)]
         public string ID { get; } = string.Empty;
-
-        public void DoBeginPopups(IEntity user, IEntity? target, IEntity part)
-        {
-            user.PopupMessage(SurgeonBeginPopup(user, target, part));
-
-            if (target != null && target != user)
-            {
-                target.PopupMessage(TargetBeginPopup(user, part));
-            }
-
-            // todo popup everyone when it is moved to shared
-        }
 
         public string SurgeonBeginPopup(IEntity user, IEntity? target, IEntity part)
         {

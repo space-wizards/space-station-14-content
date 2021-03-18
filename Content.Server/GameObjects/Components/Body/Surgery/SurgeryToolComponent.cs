@@ -1,7 +1,9 @@
 ﻿#nullable enable
+using System.Threading;
 using System.Threading.Tasks;
-using Content.Server.GameObjects.EntitySystems;
+using Content.Server.GameObjects.Components.Body.Surgery.Behaviors;
 using Content.Server.GameObjects.EntitySystems.DoAfter;
+using Content.Server.GameObjects.EntitySystems.Surgery;
 using Content.Server.Utility;
 using Content.Shared.GameObjects.Components.Body;
 using Content.Shared.GameObjects.Components.Body.Part;
@@ -10,6 +12,7 @@ using Content.Shared.Interfaces.GameObjects.Components;
 using Robust.Server.GameObjects;
 using Robust.Server.Player;
 using Robust.Shared.GameObjects;
+using Robust.Shared.Serialization.Manager.Attributes;
 using Robust.Shared.ViewVariables;
 
 namespace Content.Server.GameObjects.Components.Body.Surgery
@@ -18,6 +21,9 @@ namespace Content.Server.GameObjects.Components.Body.Surgery
     [ComponentReference(typeof(SharedSurgeryToolComponent))]
     public class SurgeryToolComponent : SharedSurgeryToolComponent, IAfterInteract
     {
+        [field: DataField("behavior")]
+        public ISurgeryBehavior? Behavior { get; }
+
         [ViewVariables] private BoundUserInterface? UserInterface => Owner.GetUIOrNull(SurgeryUIKey.Key);
 
         protected override void Startup()
@@ -50,23 +56,29 @@ namespace Content.Server.GameObjects.Components.Body.Surgery
                         return;
                     }
 
-                    var performer = message.Session.AttachedEntity;
-                    if (performer == null)
+                    var surgeon = message.Session.AttachedEntity;
+                    if (surgeon == null)
                     {
                         return;
                     }
 
                     var surgerySystem = EntitySystem.Get<SurgerySystem>();
-                    if (!surgerySystem.TrySetPerformer(performer, part))
+
+                    if (surgerySystem.TryGetSurgeon(surgeon, out var oldPart))
                     {
-                        return;
+                        oldPart.SurgeryCancellation?.Cancel();
                     }
+
+                    var cancel = new CancellationTokenSource();
+                    var data = new SurgeonData(part, cancel);
+                    // TODO SURGERY turn this into a message
+                    surgerySystem.SetSurgeon(surgeon, data);
 
                     var doAfterSystem = EntitySystem.Get<DoAfterSystem>();
 
                     if (Delay > 0)
                     {
-                        var result = await doAfterSystem.DoAfter(new DoAfterEventArgs(performer, Delay, target: partEntity)
+                        var result = await doAfterSystem.DoAfter(new DoAfterEventArgs(surgeon, Delay, cancel.Token, partEntity)
                         {
                             BreakOnDamage = true,
                             BreakOnStun = true,
@@ -78,12 +90,16 @@ namespace Content.Server.GameObjects.Components.Body.Surgery
 
                         if (result == DoAfterStatus.Finished)
                         {
-                            Behavior.Perform(performer, part);
+                            Behavior.Perform(surgeon, part);
+                        }
+                        else
+                        {
+                            surgerySystem.RemoveSurgeon(surgeon, data);
                         }
                     }
                     else
                     {
-                        Behavior.Perform(performer, part);
+                        Behavior.Perform(surgeon, part);
                     }
 
                     break;
@@ -136,16 +152,9 @@ namespace Content.Server.GameObjects.Components.Body.Surgery
                 return false;
             }
 
-            var surgerySystem = EntitySystem.Get<SurgerySystem>();
+            OpenUI(actor.playerSession);
+            UpdateUI(body);
 
-            if (!surgerySystem.TryGetPerformerPart(eventArgs.User, out var part))
-            {
-                OpenUI(actor.playerSession);
-                UpdateUI(body);
-                return true;
-            }
-
-            Behavior.Perform(user, part);
             return true;
         }
     }
