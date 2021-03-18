@@ -1,6 +1,5 @@
 ﻿#nullable enable
 using Content.Shared.GameObjects.Components.Body.Surgery.Behaviors;
-using JetBrains.Annotations;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Serialization.Manager.Attributes;
 
@@ -10,10 +9,10 @@ namespace Content.Shared.GameObjects.Components.Body.Surgery
     {
         public override string Name => "SurgeryTool";
 
-        [DataField("behavior")]
-        public ISurgeryBehavior? Behavior { get; [UsedImplicitly] private set; }
+        [field: DataField("behavior")]
+        public ISurgeryBehavior? Behavior { get; }
 
-        [DataField("delay")]
-        public float Delay { get; [UsedImplicitly] private set; }
+        [field: DataField("delay")]
+        public float Delay { get; }
     }
 }
