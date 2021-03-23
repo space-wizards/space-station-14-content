@@ -13,9 +13,6 @@ using Content.Shared.GameObjects.Components.Movement;
 using Content.Shared.GameObjects.EntitySystems;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
-using Robust.Shared.Maths;
-using Robust.Shared.Physics;
-using Robust.Shared.Physics.Collision;
 using Robust.Shared.Players;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
@@ -214,6 +211,14 @@ namespace Content.Shared.GameObjects.Components.Body
             DebugTools.AssertNotNull(part);
 
             return _parts.ContainsValue(part);
+        }
+
+        public bool HasPart(IEntity part)
+        {
+            DebugTools.AssertNotNull(part);
+
+            return part.TryGetComponent(out IBodyPart? partComponent) &&
+                   HasPart(partComponent);
         }
 
         public void RemovePart(IBodyPart part)

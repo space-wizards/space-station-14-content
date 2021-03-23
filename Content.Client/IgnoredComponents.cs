@@ -249,6 +249,7 @@ namespace Content.Client
             "FigureSpawner",
             "RandomSpawner",
             "SurgeryTool",
+            "SurgeryDrapes"
         };
     }
 }

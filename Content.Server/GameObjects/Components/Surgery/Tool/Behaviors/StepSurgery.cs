@@ -1,0 +1,56 @@
+﻿using Content.Server.Utility;
+using Content.Shared.GameObjects.Components.Body.Part;
+using Content.Shared.GameObjects.Components.Surgery.Step;
+using Content.Shared.GameObjects.Components.Surgery.Surgeon;
+using Content.Shared.GameObjects.Components.Surgery.Target;
+using Content.Shared.Interfaces;
+using Robust.Shared.IoC;
+using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization.Manager.Attributes;
+
+namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
+{
+    public class StepSurgery : SurgeryBehavior
+    {
+        [field: DataField("step")] private string? StepId { get; }
+
+        public SurgeryStepPrototype? Step => StepId == null
+            ? null
+            : IoCManager.Resolve<IPrototypeManager>().Index<SurgeryStepPrototype>(StepId);
+
+        public override bool CanPerform(SurgeonComponent surgeon, SurgeryTargetComponent target)
+        {
+            return StepId != null && target.CanAddSurgeryTag(StepId);
+        }
+
+        public override bool Perform(SurgeonComponent surgeon, SurgeryTargetComponent target)
+        {
+            var step = Step;
+
+            if (step == null)
+            {
+                return false;
+            }
+
+            if (!target.TryAddSurgeryTag(step.ID))
+            {
+                surgeon.Owner.PopupMessage("You see no useful way to do that.");
+                return false;
+            }
+
+            var surgeonOwner = surgeon.Owner;
+            var targetOwner = target.Owner.GetComponentOrNull<IBodyPart>()?.Body?.Owner ?? target.Owner;
+
+            surgeonOwner.PopupMessage(step.SurgeonBeginPopup(surgeonOwner, targetOwner, targetOwner));
+
+            if (targetOwner != surgeonOwner)
+            {
+                targetOwner.PopupMessage(step.TargetBeginPopup(surgeonOwner, targetOwner));
+            }
+
+            surgeonOwner.PopupMessageOtherClients(step.OutsiderBeginPopup(surgeonOwner, targetOwner, targetOwner), except: targetOwner);
+
+            return true;
+        }
+    }
+}

@@ -4,6 +4,8 @@
   parent: BaseItem
   name: "slime body part"
   abstract: true
+  components:
+  - type: Surgery
 
 - type: entity
   id: TorsoSlime

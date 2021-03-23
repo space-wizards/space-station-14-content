@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Content.Shared.GameObjects.Components.Body.Mechanism;
-using Content.Shared.GameObjects.Components.Body.Surgery;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
 using Robust.Shared.Map;
 using Robust.Shared.Players;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.Manager.Attributes;
 using Robust.Shared.Utility;
@@ -17,6 +17,8 @@ namespace Content.Shared.GameObjects.Components.Body.Part
 {
     public abstract class SharedBodyPartComponent : Component, IBodyPart
     {
+        [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
+
         public override string Name => "BodyPart";
 
         public override uint? NetID => ContentNetIDs.BODY_PART;
@@ -66,7 +68,6 @@ namespace Content.Shared.GameObjects.Components.Body.Part
         [ViewVariables] public int SizeUsed { get; private set; }
 
         // TODO BODY size used
-        // TODO BODY surgerydata
 
         /// <summary>
         ///     What types of BodyParts this <see cref="IBodyPart"/> can easily attach to.
@@ -96,9 +97,6 @@ namespace Content.Shared.GameObjects.Components.Body.Part
         [ViewVariables]
         [DataField("symmetry")]
         public BodyPartSymmetry Symmetry { get; private set; } = BodyPartSymmetry.None;
-
-        // TODO BODY: serialize
-        private List<SurgeryTag> _surgeryTags = new();
 
         protected virtual void OnAddMechanism(IMechanism mechanism)
         {
@@ -252,30 +250,6 @@ namespace Content.Shared.GameObjects.Components.Body.Part
             }
 
             mechanism.Owner.Delete();
-            return true;
-        }
-
-        public bool AddSurgeryTag(SurgeryTag tag)
-        {
-            _surgeryTags.Add(tag);
-            return true;
-        }
-
-        public bool HasSurgeryTag(SurgeryTag tag)
-        {
-            return _surgeryTags.Contains(tag);
-        }
-
-        public bool RemoveSurgeryTag(SurgeryTag tag)
-        {
-            var index = _surgeryTags.LastIndexOf(tag);
-
-            if (index == -1)
-            {
-                return false;
-            }
-
-            _surgeryTags.RemoveAt(index);
             return true;
         }
 

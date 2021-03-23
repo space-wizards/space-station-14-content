@@ -93,6 +93,16 @@ namespace Content.Shared.GameObjects.Components.Body
         bool HasPart(IBodyPart part);
 
         /// <summary>
+        ///     Checks if this <see cref="IBody"/> contains the given <see cref="part"/>.
+        /// </summary>
+        /// <param name="part">The part entity to look for.</param>
+        /// <returns>
+        ///     true if the given <see cref="part"/> is attached to the body,
+        ///     false otherwise.
+        /// </returns>
+        bool HasPart(IEntity part);
+
+        /// <summary>
         ///     Removes the given <see cref="IBodyPart"/> reference, potentially
         ///     dropping other <see cref="IBodyPart">BodyParts</see> if they
         ///     were hanging off of it.

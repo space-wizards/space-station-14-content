@@ -5,6 +5,8 @@
   parent: BaseItem
   name: "human body part"
   abstract: true
+  components:
+  - type: Surgery
 
 - type: entity
   id: TorsoHuman

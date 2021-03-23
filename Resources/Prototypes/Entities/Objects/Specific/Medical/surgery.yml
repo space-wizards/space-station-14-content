@@ -12,6 +12,19 @@
     - key: enum.SurgeryUIKey.Key
       type: SurgeryBoundUserInterface
 
+# Drape
+- type: entity
+  name: drapes
+  id: DrapesSurgery
+  parent: BaseToolSurgery
+  components:
+  - type: SurgeryDrapes
+  - type: Sprite
+    sprite: Objects/Specific/Medical/Surgery/drapes.rsi
+    state: drapes
+  - type: Item
+    sprite: Objects/Specific/Medical/Surgery/drapes.rsi
+
 # Cautery
 
 - type: entity

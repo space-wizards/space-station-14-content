@@ -94,6 +94,8 @@ namespace Content.Shared.GameObjects
         public const uint TAG = 1086;
         // Used for clientside fake prediction of doors.
         public const uint DOOR = 1087;
+        public const uint SURGEON = 1088;
+        public const uint SURGERY_TARGET = 1089;
 
         // Net IDs for integration tests.
         public const uint PREDICTION_TEST = 10001;
