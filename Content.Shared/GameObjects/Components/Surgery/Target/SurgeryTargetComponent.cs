@@ -83,7 +83,7 @@ namespace Content.Shared.GameObjects.Components.Surgery.Target
 
             _surgeon = state.Surgeon == null
                 ? null
-                : Owner.EntityManager.GetEntity(state.Surgeon.Value).GetComponent<SurgeonComponent>();
+                : Owner.EntityManager.GetEntity(state.Surgeon.Value).EnsureComponent<SurgeonComponent>();
 
             _operationId = state.Operation;
         }

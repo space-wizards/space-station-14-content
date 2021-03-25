@@ -60,7 +60,7 @@ namespace Content.Shared.GameObjects.Components.Surgery.Surgeon
 
             _target = state.Target == null
                 ? null
-                : Owner.EntityManager.GetEntity(state.Target.Value).GetComponent<SurgeryTargetComponent>();
+                : Owner.EntityManager.GetEntity(state.Target.Value).EnsureComponent<SurgeryTargetComponent>();
         }
 
         public bool TryStartSurgery(SurgeryTargetComponent target, SurgeryOperationPrototype operation, [NotNullWhen(true)] out CancellationTokenSource? token)

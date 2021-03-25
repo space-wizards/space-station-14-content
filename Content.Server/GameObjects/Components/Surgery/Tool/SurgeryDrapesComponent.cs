@@ -49,6 +49,103 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
             }
         }
 
+        private void DoPopups(IEntity surgeon, IEntity target, SurgeryOperationPrototype operation)
+        {
+            if (SurgeonIsTarget(surgeon, target))
+            {
+                if (target.TryGetComponent(out IBodyPart? part) &&
+                    part.Body != null)
+                {
+                    var id = "surgery-prepare-start-self-surgeon-popup";
+                    target.PopupMessage(surgeon, Loc.GetString(id,
+                        ("item", Owner),
+                        ("zone", target),
+                        ("procedure", operation.Name)));
+
+                    id = "surgery-prepare-start-self-outsider-popup";
+                    part.Body.Owner.PopupMessageOtherClients(Loc.GetString(id,
+                        ("user", surgeon),
+                        ("item", Owner),
+                        ("part", target),
+                        ("procedure", operation.Name)), except: part.Body.Owner);
+                }
+                else
+                {
+                    var id = "surgery-prepare-start-self-no-zone-surgeon-popup";
+                    target.PopupMessage(surgeon, Loc.GetString(id,
+                        ("item", Owner),
+                        ("procedure", operation.Name)));
+
+                    id = "surgery-prepare-start-self-no-zone-outsider-popup";
+                    target.PopupMessage(surgeon, Loc.GetString(id,
+                        ("user", surgeon),
+                        ("item", Owner)));
+                }
+            }
+            else
+            {
+                if (target.TryGetComponent(out IBodyPart? part) &&
+                    part.Body != null)
+                {
+                    var id = "surgery-prepare-start-surgeon-popup";
+                    part.Body.Owner.PopupMessage(surgeon, Loc.GetString(id,
+                        ("item", Owner),
+                        ("target", part.Body.Owner),
+                        ("zone", part.Owner),
+                        ("procedure", operation.Name)));
+
+                    id = "surgery-prepare-start-target-popup";
+                    surgeon.PopupMessage(part.Body.Owner, Loc.GetString(id,
+                        ("user", surgeon),
+                        ("item", Owner),
+                        ("zone", part.Owner)));
+
+                    id = "surgery-prepare-start-outsider-popup";
+                    surgeon.PopupMessageOtherClients(Loc.GetString(id,
+                        ("user", surgeon),
+                        ("item", Owner),
+                        ("target", part.Body.Owner),
+                        ("zone", target)), except: part.Body.Owner);
+                }
+                else
+                {
+                    var id = "surgery-prepare-start-no-zone-surgeon-popup";
+                    target.PopupMessage(surgeon, Loc.GetString(id,
+                        ("item", Owner),
+                        ("target", target),
+                        ("procedure", operation.Name)));
+
+                    id = "surgery-prepare-start-no-zone-target-popup";
+                    surgeon.PopupMessage(target, Loc.GetString(id,
+                        ("user", surgeon),
+                        ("item", Owner)));
+
+                    id = "surgery-prepare-start-no-zone-outsider-popup";
+                    surgeon.PopupMessageOtherClients(Loc.GetString(id,
+                        ("user", surgeon),
+                        ("item", Owner),
+                        ("target", target)), except: target);
+                }
+            }
+        }
+
+        private bool SurgeonIsTarget(IEntity surgeon, IEntity target)
+        {
+            if (surgeon == target)
+            {
+                return true;
+            }
+
+            if (target.TryGetComponent(out IBodyPart? part) &&
+                surgeon.TryGetComponent(out IBody? body) &&
+                part.Body == body)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         private void OnUIMessage(ServerBoundUserInterfaceMessage message)
         {
             switch (message.Message)
@@ -90,86 +187,7 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
                         return;
                     }
 
-                    var surgeonOwner = surgeon.Owner;
-                    var targetOwner = target.Owner;
-
-                    if (surgeonOwner == targetOwner)
-                    {
-                        if (targetOwner.TryGetComponent(out IBodyPart? part) &&
-                            part.Body != null)
-                        {
-                            var id = "surgery-prepare-start-self-surgeon-popup";
-                            targetOwner.PopupMessage(surgeonOwner, Loc.GetString(id,
-                                ("item", Owner),
-                                ("zone", targetOwner),
-                                ("procedure", operation.Name)));
-
-                            id = "surgery-prepare-start-self-outsider-popup";
-                            part.Body.Owner.PopupMessageOtherClients(Loc.GetString(id,
-                                ("user", surgeonOwner),
-                                ("item", Owner),
-                                ("part", targetOwner),
-                                ("procedure", operation.Name)), except: surgeonOwner);
-                        }
-                        else
-                        {
-                            var id = "surgery-prepare-start-self-no-zone-surgeon-popup";
-                            targetOwner.PopupMessage(surgeonOwner, Loc.GetString(id,
-                                ("item", Owner),
-                                ("procedure", operation.Name)));
-
-                            id = "surgery-prepare-start-self-no-zone-outsider-popup";
-                            targetOwner.PopupMessage(surgeonOwner, Loc.GetString(id,
-                                ("user", surgeonOwner),
-                                ("item", Owner)));
-                        }
-                    }
-                    else
-                    {
-                        if (targetOwner.TryGetComponent(out IBodyPart? part) &&
-                            part.Body != null)
-                        {
-                            var id = "surgery-prepare-start-surgeon-popup";
-                            part.Body.Owner.PopupMessage(surgeonOwner, Loc.GetString(id,
-                                ("item", Owner),
-                                ("target", part.Body.Owner),
-                                ("zone", part.Owner),
-                                ("procedure", operation.Name)));
-
-                            id = "surgery-prepare-start-target-popup";
-                            surgeonOwner.PopupMessage(part.Body.Owner, Loc.GetString(id,
-                                ("user", surgeonOwner),
-                                ("item", Owner),
-                                ("zone", part.Owner)));
-
-                            id = "surgery-prepare-start-outsider-popup";
-                            surgeonOwner.PopupMessageOtherClients(Loc.GetString(id,
-                                ("user", surgeonOwner),
-                                ("item", Owner),
-                                ("target", part.Body.Owner),
-                                ("zone", targetOwner)), except: targetOwner);
-                        }
-                        else
-                        {
-                            var id = "surgery-prepare-start-no-zone-surgeon-popup";
-                            targetOwner.PopupMessage(surgeonOwner, Loc.GetString(id,
-                                ("item", Owner),
-                                ("target", targetOwner),
-                                ("procedure", operation.Name)));
-
-                            id = "surgery-prepare-start-no-zone-target-popup";
-                            surgeonOwner.PopupMessage(targetOwner, Loc.GetString(id,
-                                ("user", surgeonOwner),
-                                ("item", Owner)));
-
-                            id = "surgery-prepare-start-no-zone-outsider-popup";
-                            surgeonOwner.PopupMessageOtherClients(Loc.GetString(id,
-                                ("user", surgeonOwner),
-                                ("item", Owner),
-                                ("target", targetOwner)), except: targetOwner);
-                        }
-                    }
-
+                    DoPopups(surgeon.Owner, target.Owner, operation);
                     break;
             }
         }
