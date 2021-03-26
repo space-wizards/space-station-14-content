@@ -9,7 +9,7 @@ surgery-prepare-start-target-popup = {$user} drapes {$item} over your {$zone} to
 surgery-prepare-start-no-zone-target-popup = {$user} drapes {$item} over you to prepare for a surgery
 
 # Outsider
-surgery-prepare-start-outsider-popup = {$user} drapes {$item] over {$target}'s {$zone} to prepare for surgery
+surgery-prepare-start-outsider-popup = {$user} drapes {$item} over {$target}'s {$zone} to prepare for surgery
 surgery-prepare-start-no-zone-outsider-popup = {$user} drapes {$item} over {$target} to prepare for surgery
 surgery-prepare-start-self-outsider-popup = {$user} drapes {$item} over {GENDER($user) ->
   [male] his
