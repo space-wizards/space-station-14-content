@@ -133,6 +133,8 @@ namespace Content.Shared.GameObjects.Components.Surgery.Target
             }
 
             _surgeryTags.Add(tag);
+            CheckCompletion();
+
             return true;
         }
 
@@ -151,6 +153,28 @@ namespace Content.Shared.GameObjects.Components.Surgery.Target
 
             _surgeryTags.RemoveAt(_surgeryTags.Count - 1);
             return true;
+        }
+
+        private void CheckCompletion()
+        {
+            if (Operation == null ||
+                Operation.Steps.Count > _surgeryTags.Count)
+            {
+                return;
+            }
+
+            for (var i = 0; i < _surgeryTags.Count; i++)
+            {
+                var tag = _surgeryTags[i];
+                var step = Operation.Steps[i];
+
+                if (tag != step)
+                {
+                    return;
+                }
+            }
+
+            Operation.Effect?.Execute(this);
         }
     }
 }
