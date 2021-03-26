@@ -1,0 +1,9 @@
+- type: surgeryOperation
+  id: Autopsy
+  name: Autopsy
+  description: Examination of cadavers to find cause of death.
+  steps:
+  - Incision
+  - AutopsyScan
+  effect:
+    !type:AutopsyOperation

@@ -2,13 +2,40 @@
   id: Amputation
 
 - type: surgeryStep
+  id: AutopsyScan
+
+- type: surgeryStep
+  id: BoneGel
+
+- type: surgeryStep
+  id: Bonesaw
+
+- type: surgeryStep
+  id: BoneSetter
+
+- type: surgeryStep
   id: Cauterization
 
 - type: surgeryStep
   id: Drilling
 
 - type: surgeryStep
+  id: Extraction
+
+- type: surgeryStep
+  id: FixOVein
+
+- type: surgeryStep
   id: Incision
+
+- type: surgeryStep
+  id: Insertion
+
+- type: surgeryStep
+  id: LimbAttachment
+
+- type: surgeryStep
+  id: OrganMending
 
 - type: surgeryStep
   id: Retraction

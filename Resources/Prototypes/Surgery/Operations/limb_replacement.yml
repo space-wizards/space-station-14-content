@@ -1,0 +1,10 @@
+- type: surgeryOperation
+  id: LimbReplacement
+  name: Limb Replacement
+  description: Replacing missing limbs or severed heads.
+  steps:
+  - Amputation
+  - LimbAttachment
+  - VesselCompression
+  effect:
+    !type:LimbReplacementOperation
