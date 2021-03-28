@@ -15,7 +15,7 @@
 # Drape
 - type: entity
   name: drapes
-  id: DrapesSurgery
+  id: Drapes
   parent: BaseToolSurgery
   components:
   - type: SurgeryDrapes
