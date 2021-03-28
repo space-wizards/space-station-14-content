@@ -1,0 +1,14 @@
+- type: surgeryOperation
+  id: ObjectRemoval
+  name: Shrapnel and Implant Removal
+  description: Removes shrapnel, implants, bullets, or anything else stuck in the body.
+  steps:
+  - Incision
+  - Bonesaw
+  - Extraction
+  - BoneGel
+  - BoneSetter
+  - BoneGel
+  - Cauterization
+  effect:
+    !type:ObjectRemovalOperation
