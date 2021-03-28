@@ -8,3 +8,4 @@
   - VesselCompression
   effect:
     !type:LimbReplacementOperation
+  hidden: true # TODO SURGERY

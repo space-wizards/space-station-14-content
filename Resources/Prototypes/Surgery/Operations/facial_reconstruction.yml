@@ -10,3 +10,4 @@
   - Cauterization
   effect:
     !type:FacialReconstructionOperation
+  hidden: true # TODO SURGERY

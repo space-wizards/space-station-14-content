@@ -10,3 +10,4 @@
   - Cauterization
   effect:
     !type:BoneRepairOperation
+  hidden: true # TODO SURGERY

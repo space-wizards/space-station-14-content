@@ -12,3 +12,4 @@
   - Cauterization
   effect:
     !type:ObjectRemovalOperation
+  hidden: true # TODO SURGERY

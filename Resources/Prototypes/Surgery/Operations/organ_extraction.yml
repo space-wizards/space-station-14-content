@@ -8,3 +8,4 @@
   - Extraction
   effect:
     !type:OrganExtractionOperation
+  hidden: true # TODO SURGERY

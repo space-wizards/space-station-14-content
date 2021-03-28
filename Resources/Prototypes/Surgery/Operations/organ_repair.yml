@@ -12,3 +12,4 @@
   - Cauterization
   effect:
     !type:OrganRepairOperation
+  hidden: true # TODO SURGERY

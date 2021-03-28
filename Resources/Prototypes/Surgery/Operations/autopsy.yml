@@ -7,3 +7,4 @@
   - AutopsyScan
   effect:
     !type:AutopsyOperation
+  hidden: true # TODO SURGERY

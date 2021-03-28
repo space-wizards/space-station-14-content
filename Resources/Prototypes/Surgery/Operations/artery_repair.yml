@@ -8,3 +8,4 @@
   - Cauterization
   effect:
     !type:ArteryRepairOperation
+  hidden: true # TODO SURGERY
