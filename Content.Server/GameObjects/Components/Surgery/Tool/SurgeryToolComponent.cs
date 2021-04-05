@@ -19,7 +19,7 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
         [field: DataField("behavior")]
         public ISurgeryBehavior? Behavior { get; } = default!;
 
-        private async Task Use(SurgeonComponent user, SurgeryTargetComponent target)
+        private async Task Use(SurgeonComponent surgeon, SurgeryTargetComponent target)
         {
             if (Behavior == null)
             {
@@ -30,12 +30,14 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
 
             if (Delay <= 0)
             {
-                Behavior.Perform(user, target);
+                Behavior.Perform(surgeon, target);
                 return;
             }
 
-            var cancelToken = user.SurgeryCancellation?.Token ?? default;
-            var result = await doAfterSystem.DoAfter(new DoAfterEventArgs(user.Owner, Delay, cancelToken, target.Owner)
+            Behavior.OnBeginPerformDelay(surgeon, target);
+
+            var cancelToken = surgeon.SurgeryCancellation?.Token ?? default;
+            var result = await doAfterSystem.DoAfter(new DoAfterEventArgs(surgeon.Owner, Delay, cancelToken, target.Owner)
             {
                 BreakOnDamage = true,
                 BreakOnStun = true,
@@ -46,7 +48,7 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
 
             if (result == DoAfterStatus.Finished)
             {
-                Behavior.Perform(user, target);
+                Behavior.Perform(surgeon, target);
             }
         }
 

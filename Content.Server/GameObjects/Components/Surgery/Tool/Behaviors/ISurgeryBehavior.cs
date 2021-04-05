@@ -9,6 +9,8 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
     {
         bool CanPerform(SurgeonComponent surgeon, SurgeryTargetComponent target);
 
+        void OnBeginPerformDelay(SurgeonComponent surgeon, SurgeryTargetComponent target);
+
         bool Perform(SurgeonComponent surgeon, SurgeryTargetComponent target);
     }
 }

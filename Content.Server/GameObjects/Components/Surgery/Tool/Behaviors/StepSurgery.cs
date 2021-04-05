@@ -7,12 +7,14 @@ using Content.Shared.Interfaces;
 using Robust.Shared.IoC;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.Manager.Attributes;
+using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
 namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
 {
     public class StepSurgery : SurgeryBehavior
     {
-        [field: DataField("step")] private string? StepId { get; }
+        [field: DataField("step", customTypeSerializer: typeof(PrototypeIdSerializer<SurgeryStepPrototype>))]
+        private string? StepId { get; } = default;
 
         public SurgeryStepPrototype? Step => StepId == null
             ? null
@@ -21,6 +23,28 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
         public override bool CanPerform(SurgeonComponent surgeon, SurgeryTargetComponent target)
         {
             return StepId != null && target.CanAddSurgeryTag(StepId);
+        }
+
+        public override void OnBeginPerformDelay(SurgeonComponent surgeon, SurgeryTargetComponent target)
+        {
+            var step = Step;
+
+            if (step == null)
+            {
+                return;
+            }
+
+            var surgeonOwner = surgeon.Owner;
+            var targetOwner = target.Owner.GetComponentOrNull<IBodyPart>()?.Body?.Owner ?? target.Owner;
+
+            surgeonOwner.PopupMessage(step.SurgeonBeginPopup(surgeonOwner, targetOwner, targetOwner));
+
+            if (targetOwner != surgeonOwner)
+            {
+                targetOwner.PopupMessage(step.TargetBeginPopup(surgeonOwner, targetOwner));
+            }
+
+            surgeonOwner.PopupMessageOtherClients(step.OutsiderBeginPopup(surgeonOwner, targetOwner, targetOwner), except: targetOwner);
         }
 
         public override bool Perform(SurgeonComponent surgeon, SurgeryTargetComponent target)
@@ -41,14 +65,14 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
             var surgeonOwner = surgeon.Owner;
             var targetOwner = target.Owner.GetComponentOrNull<IBodyPart>()?.Body?.Owner ?? target.Owner;
 
-            surgeonOwner.PopupMessage(step.SurgeonBeginPopup(surgeonOwner, targetOwner, targetOwner));
+            surgeonOwner.PopupMessage(step.SurgeonSuccessPopup(surgeonOwner, targetOwner, targetOwner));
 
             if (targetOwner != surgeonOwner)
             {
-                targetOwner.PopupMessage(step.TargetBeginPopup(surgeonOwner, targetOwner));
+                targetOwner.PopupMessage(step.TargetSuccessPopup(surgeonOwner, targetOwner));
             }
 
-            surgeonOwner.PopupMessageOtherClients(step.OutsiderBeginPopup(surgeonOwner, targetOwner, targetOwner), except: targetOwner);
+            surgeonOwner.PopupMessageOtherClients(step.OutsiderSuccessPopup(surgeonOwner, targetOwner, targetOwner), except: targetOwner);
 
             return true;
         }
