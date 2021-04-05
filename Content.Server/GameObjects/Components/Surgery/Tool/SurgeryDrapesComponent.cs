@@ -206,7 +206,7 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
 
             var parts = new List<EntityUid>();
 
-            foreach (var part in body.Parts.Values)
+            foreach (var (part, _) in body.Parts)
             {
                 if (part.Owner.TryGetComponent(out SurgeryTargetComponent? surgery))
                 {
