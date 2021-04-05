@@ -7,5 +7,7 @@ namespace Content.Server.GameObjects.Components.Body
     [RegisterComponent]
     [ComponentReference(typeof(SharedMechanismComponent))]
     [ComponentReference(typeof(IMechanism))]
-    public class MechanismComponent : SharedMechanismComponent { }
+    public class MechanismComponent : SharedMechanismComponent
+    {
+    }
 }

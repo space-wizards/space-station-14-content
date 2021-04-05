@@ -3,7 +3,6 @@ using Content.Shared.GameObjects.Components.Body;
 using Content.Shared.GameObjects.Components.Body.Mechanism;
 using Content.Shared.GameObjects.Components.Body.Part;
 using Content.Shared.GameObjects.Verbs;
-using Content.Shared.Interfaces.GameObjects.Components;
 using Content.Shared.Utility;
 using Robust.Server.Console;
 using Robust.Server.GameObjects;
@@ -47,7 +46,7 @@ namespace Content.Server.GameObjects.Components.Body.Part
         {
             base.Initialize();
 
-            _mechanismContainer = ContainerHelpers.EnsureContainer<Container>(Owner, $"{Name}-{nameof(BodyPartComponent)}");
+            _mechanismContainer = Owner.EnsureContainer<Container>($"{Name}-{nameof(BodyPartComponent)}");
 
             // This is ran in Startup as entities spawned in Initialize
             // are not synced to the client since they are assumed to be
@@ -121,7 +120,7 @@ namespace Content.Server.GameObjects.Components.Body.Part
                     return;
                 }
 
-                body.TryAddPart($"{nameof(AttachBodyPartVerb)}-{component.Owner.Uid}", component, true);
+                body.SetPart($"{nameof(AttachBodyPartVerb)}-{component.Owner.Uid}", component);
             }
         }
     }
