@@ -1,7 +1,7 @@
 # Surgeon
 surgery-step-limbattachment-success-surgeon-popup = You attach {$target}'s {$part}
 surgery-step-limbattachment-success-self-surgeon-popup = You attach your {$part}
-surgery-step-limbattachment-success-no-zone-popup = You attach {PROPER($part) ->
+surgery-step-limbattachment-success-no-zone-surgeon-popup = You attach {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}
@@ -16,7 +16,7 @@ surgery-step-limbattachment-success-self-outsider-popup = {$user} attaches {GEND
   [female] her
   *[other] their
 } {$part}
-surgery-step-limbattachment-begin-no-zone-outsider-popup = {$user} attaches {PROPER($part) ->
+surgery-step-limbattachment-success-no-zone-outsider-popup = {$user} attaches {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}

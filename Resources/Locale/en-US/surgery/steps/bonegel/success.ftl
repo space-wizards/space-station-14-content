@@ -1,7 +1,7 @@
 # Surgeon
 surgery-step-bonegel-success-surgeon-popup = You successfully repair the fracture in {$target}'s {$part}
 surgery-step-bonegel-success-self-surgeon-popup = You successfully repair the fracture in your {$part}
-surgery-step-bonegel-success-no-zone-popup = You successfully repair the fracture in {PROPER($part) ->
+surgery-step-bonegel-success-no-zone-surgeon-popup = You successfully repair the fracture in {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}
@@ -16,7 +16,7 @@ surgery-step-bonegel-success-self-outsider-popup = {$user} successfully repairs 
   [female] her
   *[other] their
 } {$part}
-surgery-step-bonegel-begin-no-zone-outsider-popup = {$user} successfully repairs the fracture in {PROPER($part) ->
+surgery-step-bonegel-success-no-zone-outsider-popup = {$user} successfully repairs the fracture in {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}

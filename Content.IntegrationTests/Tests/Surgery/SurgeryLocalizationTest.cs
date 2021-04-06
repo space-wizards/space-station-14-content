@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Content.Shared.GameObjects.Components.Surgery.Operation;
+using Content.Shared.GameObjects.Components.Surgery.Step;
 using NUnit.Framework;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Localization;
@@ -49,8 +50,9 @@ namespace Content.IntegrationTests.Tests.Surgery
                 var surgeon = sEntityManager.SpawnEntity(null, coordinates);
                 var target = sEntityManager.SpawnEntity(null, coordinates);
                 var part = sEntityManager.SpawnEntity(null, coordinates);
+                var item = sEntityManager.SpawnEntity(null, coordinates);
 
-                foreach (var operation in sPrototypeManager.EnumeratePrototypes<SurgeryOperationPrototype>())
+                foreach (var operation in sPrototypeManager.EnumeratePrototypes<SurgeryStepPrototype>())
                 {
                     if (ExceptIds.Contains(operation.ID))
                     {
@@ -58,7 +60,7 @@ namespace Content.IntegrationTests.Tests.Surgery
                     }
 
                     var id = operation.ID.ToLowerInvariant();
-                    var args = new (string, object)[] {("user", surgeon), ("target", target), ("part", part)};
+                    var args = new (string, object)[] {("user", surgeon), ("target", target), ("part", part), ("item", item)};
 
                     // Begin
                     var beginId = $"surgery-step-{id}-begin";

@@ -1,7 +1,7 @@
 # Surgeon
 surgery-step-extraction-success-surgeon-popup = You extract {$target}'s {$part}
 surgery-step-extraction-success-self-surgeon-popup = You extract your {$part}
-surgery-step-extraction-success-no-zone-popup = You extract {PROPER($part) ->
+surgery-step-extraction-success-no-zone-surgeon-popup = You extract {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}
@@ -16,7 +16,7 @@ surgery-step-extraction-success-self-outsider-popup = {$user} extracts {GENDER($
   [female] her
   *[other] their
 } {$part}
-surgery-step-extraction-begin-no-zone-outsider-popup = {$user} extracts {PROPER($part) ->
+surgery-step-extraction-success-no-zone-outsider-popup = {$user} extracts {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}

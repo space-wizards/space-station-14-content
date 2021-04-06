@@ -4,7 +4,7 @@
   description: Examination of cadavers to find cause of death.
   steps:
   - Incision
-  - AutopsyScan
+  - Autopsy
   effect:
     !type:AutopsyOperation
   hidden: true # TODO SURGERY

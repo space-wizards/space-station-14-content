@@ -2,7 +2,7 @@
   id: Amputation
 
 - type: surgeryStep
-  id: AutopsyScan
+  id: Autopsy
 
 - type: surgeryStep
   id: BoneGel

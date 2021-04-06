@@ -1,7 +1,7 @@
 # Surgeon
 surgery-step-drilling-success-surgeon-popup = You drill {$target}'s {$part}
 surgery-step-drilling-success-self-surgeon-popup = You drill your {$part}
-surgery-step-drilling-success-no-zone-popup = You drill {PROPER($part) ->
+surgery-step-drilling-success-no-zone-surgeon-popup = You drill {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}
@@ -16,7 +16,7 @@ surgery-step-drilling-success-self-outsider-popup = {$user} drills {GENDER($user
   [female] her
   *[other] their
 } {$part}
-surgery-step-drilling-begin-no-zone-outsider-popup = {$user} drills {PROPER($part) ->
+surgery-step-drilling-success-no-zone-outsider-popup = {$user} drills {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}

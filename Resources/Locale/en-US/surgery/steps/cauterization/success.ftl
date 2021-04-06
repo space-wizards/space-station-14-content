@@ -1,7 +1,7 @@
 # Surgeon
 surgery-step-cauterization-success-surgeon-popup = You cauterize {$target}'s {$part}
 surgery-step-cauterization-success-self-surgeon-popup = You cauterize your {$part}
-surgery-step-cauterization-success-no-zone-popup = You cauterize {PROPER($part) ->
+surgery-step-cauterization-success-no-zone-surgeon-popup = You cauterize {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}
@@ -16,7 +16,7 @@ surgery-step-cauterization-success-self-outsider-popup = {$user} cauterizes {GEN
   [female] her
   *[other] their
 } {$part}
-surgery-step-cauterization-begin-no-zone-outsider-popup = {$user} cauterizes {PROPER($part) ->
+surgery-step-cauterization-success-no-zone-outsider-popup = {$user} cauterizes {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}

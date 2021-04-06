@@ -7,7 +7,7 @@ surgery-step-insertion-success-self-surgeon-popup = You insert {PROPER($item) ->
   [false] the
   *[bucket] {""}
 } {$item} into your {$part}
-surgery-step-insertion-success-no-zone-popup = You insert {PROPER($item) ->
+surgery-step-insertion-success-no-zone-surgeon-popup = You insert {PROPER($item) ->
   [false] the
   *[bucket] {""}
 } {$item} into {PROPER($part) ->
@@ -34,7 +34,7 @@ surgery-step-insertion-success-self-outsider-popup = {$user} inserts {PROPER($it
   [female] her
   *[other] their
 } {$part}
-surgery-step-insertion-begin-no-zone-outsider-popup = {$user} inserts {PROPER($item) ->
+surgery-step-insertion-success-no-zone-outsider-popup = {$user} inserts {PROPER($item) ->
   [false] the
   *[bucket] {""}
 } {$item} into {PROPER($part) ->

@@ -1,7 +1,7 @@
 # Surgeon
 surgery-step-bonesaw-success-surgeon-popup = You saw through {$target}'s {$part}
 surgery-step-bonesaw-success-self-surgeon-popup = You saw through your {$part}
-surgery-step-bonesaw-success-no-zone-popup = You saw through {PROPER($part) ->
+surgery-step-bonesaw-success-no-zone-surgeon-popup = You saw through {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}
@@ -16,7 +16,7 @@ surgery-step-bonesaw-success-self-outsider-popup = {$user} saws through {GENDER(
   [female] her
   *[other] their
 } {$part}
-surgery-step-bonesaw-begin-no-zone-outsider-popup = {$user} saws through {PROPER($part) ->
+surgery-step-bonesaw-success-no-zone-outsider-popup = {$user} saws through {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}

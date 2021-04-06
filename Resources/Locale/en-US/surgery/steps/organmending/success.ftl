@@ -1,7 +1,7 @@
 # Surgeon
 surgery-step-organmending-success-surgeon-popup = You mend {$target}'s {$part}
 surgery-step-organmending-success-self-surgeon-popup = You mend your {$part}
-surgery-step-organmending-success-no-zone-popup = You mend {PROPER($part) ->
+surgery-step-organmending-success-no-zone-surgeon-popup = You mend {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}
@@ -16,7 +16,7 @@ surgery-step-organmending-success-self-outsider-popup = {$user} mends {GENDER($u
   [female] her
   *[other] their
 } {$part}
-surgery-step-organmending-begin-no-zone-outsider-popup = {$user} mends {PROPER($part) ->
+surgery-step-organmending-success-no-zone-outsider-popup = {$user} mends {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}

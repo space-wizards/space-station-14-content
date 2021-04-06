@@ -1,7 +1,7 @@
 # Surgeon
 surgery-step-retraction-success-surgeon-popup = You retract {$target}'s {$part}
 surgery-step-retraction-success-self-surgeon-popup = You retract your {$part}
-surgery-step-retraction-success-no-zone-popup = You retract {PROPER($part) ->
+surgery-step-retraction-success-no-zone-surgeon-popup = You retract {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}
@@ -16,7 +16,7 @@ surgery-step-retraction-success-self-outsider-popup = {$user} retracts {GENDER($
   [female] her
   *[other] their
 } {$part}
-surgery-step-retraction-begin-no-zone-outsider-popup = {$user} retracts {PROPER($part) ->
+surgery-step-retraction-success-no-zone-outsider-popup = {$user} retracts {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}

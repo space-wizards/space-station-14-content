@@ -1,7 +1,7 @@
 # Surgeon
 surgery-step-incision-success-surgeon-popup = You complete an incision in {$target}'s {$part}
 surgery-step-incision-success-self-surgeon-popup = You complete an incision in your {$part}
-surgery-step-incision-success-no-zone-popup = You complete an incision in {PROPER($part) ->
+surgery-step-incision-success-no-zone-surgeon-popup = You complete an incision in {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}
@@ -16,7 +16,7 @@ surgery-step-incision-success-self-outsider-popup = {$user} completes an incisio
   [female] her
   *[other] their
 } {$part}
-surgery-step-incision-begin-no-zone-outsider-popup = {$user} completes an incision in {PROPER($part) ->
+surgery-step-incision-success-no-zone-outsider-popup = {$user} completes an incision in {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}

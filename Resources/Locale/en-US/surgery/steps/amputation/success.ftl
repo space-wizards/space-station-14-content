@@ -16,7 +16,7 @@ surgery-step-amputation-success-self-outsider-popup = {$user} severs {GENDER($us
   [female] her
   *[other] their
 } {$part}
-surgery-step-amputation-begin-no-zone-outsider-popup = {$user} severs {PROPER($part) ->
+surgery-step-amputation-success-no-zone-outsider-popup = {$user} severs {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}
