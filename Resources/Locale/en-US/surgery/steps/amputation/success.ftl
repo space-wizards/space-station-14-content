@@ -1,7 +1,7 @@
 ﻿# Surgeon
 surgery-step-amputation-success-surgeon-popup = You sever {$target}'s {$part}
 surgery-step-amputation-success-self-surgeon-popup = You sever your {$part}
-surgery-step-amputation-success-no-zone-popup = You sever {PROPER($part) ->
+surgery-step-amputation-success-no-zone-surgeon-popup = You sever {PROPER($part) ->
   [false] the
   *[bucket] {""}
 } {$part}
