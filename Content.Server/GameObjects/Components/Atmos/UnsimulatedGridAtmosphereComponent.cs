@@ -17,6 +17,8 @@ namespace Content.Server.GameObjects.Components.Atmos
     {
         public override string Name => "UnsimulatedGridAtmosphere";
 
+        public override bool Simulated => false;
+
         public override void PryTile(Vector2i indices) { }
 
         public override void RepopulateTiles()
@@ -63,9 +65,9 @@ namespace Content.Server.GameObjects.Components.Atmos
 
         public override void RemovePipeNet(IPipeNet pipeNet) { }
 
-        public override void AddPipeNetDevice(PipeNetDeviceComponent pipeNetDevice) { }
+        public override void AddAtmosDevice(AtmosDeviceComponent atmosDevice) { }
 
-        public override void RemovePipeNetDevice(PipeNetDeviceComponent pipeNetDevice) { }
+        public override void RemoveAtmosDevice(AtmosDeviceComponent atmosDevice) { }
 
         public override void Update(float frameTime) { }
 
@@ -104,7 +106,7 @@ namespace Content.Server.GameObjects.Components.Atmos
             return false;
         }
 
-        protected override bool ProcessPipeNetDevices(bool resumed = false, float lagCheck = 5f)
+        protected override bool ProcessAtmosDevices(bool resumed = false, float lagCheck = 5f)
         {
             return false;
         }

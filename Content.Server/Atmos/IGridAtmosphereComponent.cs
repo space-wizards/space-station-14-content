@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Content.Server.GameObjects.Components.Atmos;
 using Content.Server.GameObjects.Components.Atmos.Piping;
 using Content.Server.GameObjects.Components.NodeContainer.NodeGroups;
@@ -12,6 +13,11 @@ namespace Content.Server.Atmos
 {
     public interface IGridAtmosphereComponent : IComponent, IEnumerable<TileAtmosphere>
     {
+        /// <summary>
+        ///     Whether this atmosphere is simulated or not.
+        /// </summary>
+        bool Simulated { get; }
+
         /// <summary>
         ///     Number of times <see cref="Update"/> has been called.
         /// </summary>
@@ -173,8 +179,8 @@ namespace Content.Server.Atmos
 
         void RemovePipeNet(IPipeNet pipeNet);
 
-        void AddPipeNetDevice(PipeNetDeviceComponent pipeNetDevice);
+        void AddAtmosDevice(AtmosDeviceComponent atmosDevice);
 
-        void RemovePipeNetDevice(PipeNetDeviceComponent pipeNetDevice);
+        void RemoveAtmosDevice(AtmosDeviceComponent atmosDevice);
     }
 }

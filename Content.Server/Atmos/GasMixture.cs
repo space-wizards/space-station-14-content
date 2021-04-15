@@ -154,8 +154,7 @@ namespace Content.Server.Atmos
                 var combinedHeatCapacity = HeatCapacity + giver.HeatCapacity;
                 if (combinedHeatCapacity > 0f)
                 {
-                    Temperature =
-                        (giver.Temperature * giver.HeatCapacity + Temperature * HeatCapacity) / combinedHeatCapacity;
+                    Temperature = (giver.Temperature * giver.HeatCapacity + Temperature * HeatCapacity) / combinedHeatCapacity;
                 }
             }
 
@@ -599,6 +598,19 @@ namespace Content.Server.Atmos
                 Volume = Volume,
             };
             return newMixture;
+        }
+
+        public void ScrubInto(GasMixture destination, IReadOnlyCollection<Gas> filterGases)
+        {
+            var buffer = new GasMixture(Volume){Temperature = Temperature};
+
+            foreach (var gas in filterGases)
+            {
+                buffer.AdjustMoles(gas, GetMoles(gas));
+                SetMoles(gas, 0f);
+            }
+
+            destination.Merge(buffer);
         }
     }
 }
