@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Content.Server.GameObjects.Components.Body.Behavior;
+using Content.Server.GameObjects.Components.Chemistry;
 using Content.Server.GameObjects.Components.Fluids;
-using Content.Shared.Audio;
 using Content.Shared.Chemistry;
 using Content.Shared.GameObjects.Components.Body;
 using Content.Shared.GameObjects.Components.Chemistry;
@@ -22,84 +22,30 @@ using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Serialization.Manager.Attributes;
-using Robust.Shared.Utility;
 using Robust.Shared.ViewVariables;
 
 namespace Content.Server.GameObjects.Components.Nutrition
 {
     [RegisterComponent]
-    public class DrinkComponent : Component, IUse, IAfterInteract, ISolutionChange, IExamine, ILand
+    public class DrinkComponent : Component, IUse, IAfterInteract, ISolutionChange
     {
-        [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-        [Dependency] private readonly IRobustRandom _random = default!;
-
         public override string Name => "Drink";
 
         int IAfterInteract.Priority => 10;
 
         [ViewVariables]
-        private bool _opened;
-
-        [ViewVariables]
         [DataField("useSound")]
         private string _useSound = "/Audio/Items/drink.ogg";
 
-        [ViewVariables]
-        [DataField("isOpen")]
-        private bool _defaultToOpened;
-
         [ViewVariables(VVAccess.ReadWrite)]
         public ReagentUnit TransferAmount { get; [UsedImplicitly] private set; } = ReagentUnit.New(2);
-
-        [ViewVariables(VVAccess.ReadWrite)]
-        public bool Opened
-        {
-            get => _opened;
-            set
-            {
-                if (_opened == value)
-                {
-                    return;
-                }
-
-                _opened = value;
-                OpenedChanged();
-            }
-        }
-
         [ViewVariables]
         public bool Empty => Owner.GetComponentOrNull<ISolutionInteractionsComponent>()?.DrainAvailable <= 0;
-
-        [DataField("openSounds")]
-        private string _soundCollection = "canOpenSounds";
-        [DataField("pressurized")]
-        private bool _pressurized = default;
-        [DataField("burstSound")]
-        private string _burstSound = "/Audio/Effects/flash_bang.ogg";
 
         public override void Initialize()
         {
             base.Initialize();
-
-            Opened = _defaultToOpened;
             UpdateAppearance();
-        }
-
-        private void OpenedChanged()
-        {
-            if (!Owner.TryGetComponent(out SharedSolutionContainerComponent? contents))
-            {
-                return;
-            }
-
-            if (Opened)
-            {
-                contents.Capabilities |= SolutionContainerCaps.Refillable | SolutionContainerCaps.Drainable;
-            }
-            else
-            {
-                contents.Capabilities &= ~(SolutionContainerCaps.Refillable | SolutionContainerCaps.Drainable);
-            }
         }
 
         void ISolutionChange.SolutionChanged(SolutionChangeEventArgs eventArgs)
@@ -120,17 +66,6 @@ namespace Content.Server.GameObjects.Components.Nutrition
 
         bool IUse.UseEntity(UseEntityEventArgs args)
         {
-            if (!Opened)
-            {
-                //Do the opening stuff like playing the sounds.
-                var soundCollection = _prototypeManager.Index<SoundCollectionPrototype>(_soundCollection);
-                var file = _random.Pick(soundCollection.PickFiles);
-
-                SoundSystem.Play(Filter.Pvs(args.User), file, args.User, AudioParams.Default);
-                Opened = true;
-                return false;
-            }
-
             if (!Owner.TryGetComponent(out ISolutionInteractionsComponent? contents) ||
                 contents.DrainAvailable <= 0)
             {
@@ -149,27 +84,17 @@ namespace Content.Server.GameObjects.Components.Nutrition
                 return false;
             }
 
-            return TryUseDrink(eventArgs.User, eventArgs.Target, true);
-        }
-
-        public void Examine(FormattedMessage message, bool inDetailsRange)
-        {
-            if (!Opened || !inDetailsRange)
+            if (Owner.TryGetComponent(out SolutionContainerCapComponent? cap) && !cap.Opened)
             {
-                return;
+                eventArgs.Target.PopupMessage(Loc.GetString("Open {0:theName} first!", Owner));
+                return false;
             }
-            var color = Empty ? "gray" : "yellow";
-            var openedText = Loc.GetString(Empty ? "Empty" : "Opened");
-            message.AddMarkup(Loc.GetString("[color={0}]{1}[/color]", color, openedText));
+
+            return TryUseDrink(eventArgs.User, eventArgs.Target, true);
         }
 
         private bool TryUseDrink(IEntity user, IEntity target, bool forced = false)
         {
-            if (!Opened)
-            {
-                target.PopupMessage(Loc.GetString("Open {0:theName} first!", Owner));
-                return false;
-            }
 
             if (!Owner.TryGetComponent(out ISolutionInteractionsComponent? interactions) ||
                 !interactions.CanDrain ||
@@ -231,28 +156,6 @@ namespace Content.Server.GameObjects.Components.Nutrition
             firstStomach.TryTransferSolution(drain);
 
             return true;
-        }
-
-        void ILand.Land(LandEventArgs eventArgs)
-        {
-            if (_pressurized &&
-                !Opened &&
-                _random.Prob(0.25f) &&
-                Owner.TryGetComponent(out ISolutionInteractionsComponent? interactions))
-            {
-                Opened = true;
-
-                if (!interactions.CanDrain)
-                {
-                    return;
-                }
-
-                var solution = interactions.Drain(interactions.DrainAvailable);
-                solution.SpillAt(Owner, "PuddleSmear");
-
-                SoundSystem.Play(Filter.Pvs(Owner), _burstSound, Owner,
-                    AudioParams.Default.WithVolume(-4));
-            }
         }
     }
 }
