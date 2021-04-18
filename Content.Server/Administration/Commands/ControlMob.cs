@@ -1,5 +1,4 @@
 using Content.Server.GameObjects.Components.Mobs;
-using Content.Server.GameObjects.Components.Observer;
 using Content.Server.Players;
 using Content.Shared.Administration;
 using Robust.Server.Player;
@@ -61,7 +60,6 @@ namespace Content.Server.Administration.Commands
 
             DebugTools.AssertNotNull(mind);
 
-            mindComponent.Mind?.TransferTo(null);
             mind!.TransferTo(target);
         }
     }
