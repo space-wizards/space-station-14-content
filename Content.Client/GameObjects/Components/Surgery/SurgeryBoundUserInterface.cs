@@ -60,7 +60,7 @@ namespace Content.Client.GameObjects.Components.Surgery
 
         private void OnOperationSelected(IEntity target, string operationId)
         {
-            var msg = new SurgeryOperationSelectedUIMessage(target.Uid, operationId);
+            var msg = new SurgeryOpPartSelectUIMsg(target.Uid, operationId);
             SendMessage(msg);
         }
 

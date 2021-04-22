@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using Content.Shared.GameObjects.Components.Body.Slot;
 using Content.Shared.GameObjects.Components.Surgery.Operation;
 using Content.Shared.GameObjects.Components.Surgery.Surgeon.ComponentMessages;
 using Content.Shared.GameObjects.Components.Surgery.Surgeon.Messages;
@@ -36,6 +37,7 @@ namespace Content.Shared.GameObjects.Components.Surgery.Surgeon
 
                     SurgeryCancellation?.Cancel();
                     SurgeryCancellation = null;
+                    BodyPartSlot = null;
 
                     var message = new SurgeonStoppedOperationMessage(old!);
                     Owner.EntityManager.EventBus.RaiseLocalEvent(Owner.Uid, message);
@@ -48,6 +50,8 @@ namespace Content.Shared.GameObjects.Components.Surgery.Surgeon
         }
 
         public CancellationTokenSource? SurgeryCancellation { get; private set; }
+
+        public BodyPartSlot? BodyPartSlot { get; private set; }
 
         public override void HandleComponentState(ComponentState? curState, ComponentState? nextState)
         {
@@ -63,7 +67,10 @@ namespace Content.Shared.GameObjects.Components.Surgery.Surgeon
                 : Owner.EntityManager.GetEntity(state.Target.Value).EnsureComponent<SurgeryTargetComponent>();
         }
 
-        public bool TryStartSurgery(SurgeryTargetComponent target, SurgeryOperationPrototype operation, [NotNullWhen(true)] out CancellationTokenSource? token)
+        public bool TryStartSurgery(
+            SurgeryTargetComponent target,
+            SurgeryOperationPrototype operation,
+            [NotNullWhen(true)] out CancellationTokenSource? token)
         {
             if (_target != null)
             {

@@ -116,8 +116,13 @@ namespace Content.Shared.GameObjects.Components.Surgery.Target
         public bool CanAddSurgeryTag(SurgeryTag tag)
         {
             if (Operation == null ||
-                Operation.Steps.Count <= _surgeryTags.Count ||
-                Operation.Steps[_surgeryTags.Count] != tag)
+                Operation.Steps.Count <= _surgeryTags.Count)
+            {
+                return false;
+            }
+
+            var nextStep = Operation.Steps[_surgeryTags.Count];
+            if (!nextStep.Necessary(this) || nextStep.Id != tag)
             {
                 return false;
             }
@@ -163,12 +168,21 @@ namespace Content.Shared.GameObjects.Components.Surgery.Target
                 return;
             }
 
+            var offset = 0;
+
             for (var i = 0; i < _surgeryTags.Count; i++)
             {
-                var tag = _surgeryTags[i];
-                var step = Operation.Steps[i];
+                var step = Operation.Steps[i + offset];
 
-                if (tag != step)
+                if (!step.Necessary(this))
+                {
+                    offset++;
+                    step = Operation.Steps[i + offset];
+                }
+
+                var tag = _surgeryTags[i];
+
+                if (tag != step.Id)
                 {
                     return;
                 }

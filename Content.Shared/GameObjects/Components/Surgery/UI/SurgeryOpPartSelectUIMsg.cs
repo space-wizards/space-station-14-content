@@ -5,15 +5,15 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.GameObjects.Components.Surgery.UI
 {
     [Serializable, NetSerializable]
-    public class SurgeryOperationSelectedUIMessage : BoundUserInterfaceMessage
+    public class SurgeryOpPartSelectUIMsg : BoundUserInterfaceMessage
     {
-        public SurgeryOperationSelectedUIMessage(EntityUid target, string operationId)
+        public SurgeryOpPartSelectUIMsg(EntityUid part, string operationId)
         {
-            Target = target;
+            Part = part;
             OperationId = operationId;
         }
 
-        public EntityUid Target { get; }
+        public EntityUid Part { get; }
 
         public string OperationId { get; }
     }

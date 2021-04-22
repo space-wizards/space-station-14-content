@@ -3,7 +3,8 @@
   name: Limb Replacement
   description: Replacing missing limbs or severed heads.
   steps:
-  - Amputation
+  - id: Amputation
+    conditional: !type:StumpConditional
   - LimbAttachment
   - VesselCompression
   effect:

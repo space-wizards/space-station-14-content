@@ -1,5 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Content.Shared.GameObjects.Components.Surgery.Operation.Effect;
+using Content.Shared.GameObjects.Components.Surgery.Operation.Step;
+using Content.Shared.GameObjects.Components.Surgery.Operation.Step.Serializers;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.Manager.Attributes;
 
@@ -17,8 +19,8 @@ namespace Content.Shared.GameObjects.Components.Surgery.Operation
         [field: DataField("description")]
         public string Description { get; } = string.Empty;
 
-        [field: DataField("steps")]
-        public ImmutableList<string> Steps { get; } = ImmutableList<string>.Empty;
+        [field: DataField("steps", customTypeSerializer: typeof(OperationStepImmutableListSerializer))]
+        public ImmutableList<OperationStep> Steps { get; } = ImmutableList<OperationStep>.Empty;
 
         [field: DataField("effect", serverOnly: true)]
         public IOperationEffect? Effect { get; }

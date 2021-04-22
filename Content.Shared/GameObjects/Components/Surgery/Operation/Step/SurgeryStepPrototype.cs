@@ -4,7 +4,7 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.Manager.Attributes;
 using Robust.Shared.ViewVariables;
 
-namespace Content.Shared.GameObjects.Components.Surgery.Step
+namespace Content.Shared.GameObjects.Components.Surgery.Operation.Step
 {
     [Prototype("surgeryStep")]
     public class SurgeryStepPrototype : IPrototype

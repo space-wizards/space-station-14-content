@@ -1,6 +1,6 @@
 ﻿using Content.Server.Utility;
 using Content.Shared.GameObjects.Components.Body.Part;
-using Content.Shared.GameObjects.Components.Surgery.Step;
+using Content.Shared.GameObjects.Components.Surgery.Operation.Step;
 using Content.Shared.GameObjects.Components.Surgery.Surgeon;
 using Content.Shared.GameObjects.Components.Surgery.Target;
 using Content.Shared.Interfaces;

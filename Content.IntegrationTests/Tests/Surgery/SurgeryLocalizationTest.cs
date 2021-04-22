@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Content.Shared.GameObjects.Components.Surgery.Operation;
-using Content.Shared.GameObjects.Components.Surgery.Step;
+using Content.Shared.GameObjects.Components.Surgery.Operation.Step;
 using NUnit.Framework;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Localization;

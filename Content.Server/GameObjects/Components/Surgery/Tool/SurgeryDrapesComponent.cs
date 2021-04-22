@@ -150,18 +150,18 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
         {
             switch (message.Message)
             {
-                case SurgeryOperationSelectedUIMessage msg:
-                    if (!Owner.EntityManager.TryGetEntity(msg.Target, out var targetEntity))
+                case SurgeryOpPartSelectUIMsg msg:
+                    if (!Owner.EntityManager.TryGetEntity(msg.Part, out var targetEntity))
                     {
                         _sawmill.Warning(
-                            $"Client {message.Session} sent {nameof(SurgeryOperationSelectedUIMessage)} with an invalid target entity id: {msg.Target}");
+                            $"Client {message.Session} sent {nameof(SurgeryOpPartSelectUIMsg)} with an invalid target entity id: {msg.Part}");
                         return;
                     }
 
                     if (!targetEntity.TryGetComponent(out SurgeryTargetComponent? target))
                     {
                         _sawmill.Warning(
-                            $"Client {message.Session} sent {nameof(SurgeryOperationSelectedUIMessage)} with an entity that has no {nameof(SurgeryTargetComponent)}: {targetEntity}");
+                            $"Client {message.Session} sent {nameof(SurgeryOpPartSelectUIMsg)} with an entity that has no {nameof(SurgeryTargetComponent)}: {targetEntity}");
                         return;
                     }
 
@@ -170,20 +170,20 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
                     if (surgeon == null)
                     {
                         _sawmill.Warning(
-                            $"Client {message.Session} sent {nameof(SurgeryOperationSelectedUIMessage)} with no attached entity of their own.");
+                            $"Client {message.Session} sent {nameof(SurgeryOpPartSelectUIMsg)} with no attached entity of their own.");
                         return;
                     }
 
                     if (!_prototypeManager.TryIndex<SurgeryOperationPrototype>(msg.OperationId, out var operation))
                     {
                         _sawmill.Warning(
-                            $"Client {message.Session} sent {nameof(SurgeryOperationSelectedUIMessage)} with an invalid {nameof(SurgeryOperationPrototype)} id: {msg.OperationId}");
+                            $"Client {message.Session} sent {nameof(SurgeryOpPartSelectUIMsg)} with an invalid {nameof(SurgeryOperationPrototype)} id: {msg.OperationId}");
                         return;
                     }
 
                     if (!surgeon.TryStartSurgery(target, operation))
                     {
-                        _sawmill.Warning($"Client {message.Session} sent {nameof(SurgeryOperationSelectedUIMessage)} to a start a {msg.OperationId} operation while already performing a {target.Operation?.ID} on {target.Owner}");
+                        _sawmill.Warning($"Client {message.Session} sent {nameof(SurgeryOpPartSelectUIMsg)} to a start a {msg.OperationId} operation while already performing a {target.Operation?.ID} on {target.Owner}");
                         return;
                     }
 
