@@ -231,6 +231,7 @@ namespace Content.Client
             "FoamSolutionAreaEffect",
             "GasFilter",
             "Recyclable",
+            "LightReplacer",
             "SecretStash",
             "Toilet",
             "ClusterFlash",
@@ -251,6 +252,7 @@ namespace Content.Client
             "SpawnAfterInteract",
             "DisassembleOnActivate",
             "ExplosionLaunched",
+            "Advertise",
             "SurgeryTool",
             "SurgeryDrapes",
         };
