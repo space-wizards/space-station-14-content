@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 using System.Collections.Generic;
 using System.Threading;
 using Content.Server.GameObjects.Components.ActionBlocking;
@@ -125,7 +125,7 @@ namespace Content.Server.GameObjects.Components.GUI
                 return dictionary;
             }
 
-            foreach (var hand in hands.Hands)
+            foreach (var hand in hands.HandNames)
             {
                 dictionary[hand] = hands.GetItem(hand)?.Owner.Name ?? "None";
             }
@@ -238,7 +238,7 @@ namespace Content.Server.GameObjects.Components.GUI
                     return false;
                 }
 
-                if (!hands.CanPutInHand(item, hand, false))
+                if (!hands.CanPickupEntity(hand, item.Owner, checkActionBlocker: false))
                 {
                     user.PopupMessageCursor(Loc.GetString("{0:They} cannot put that there!", Owner));
                     return false;
@@ -262,8 +262,8 @@ namespace Content.Server.GameObjects.Components.GUI
             var result = await doAfterSystem.DoAfter(doAfterArgs);
             if (result != DoAfterStatus.Finished) return;
 
-            userHands.Drop(hand, false);
-            hands.PutInHand(item!, hand, false, false);
+            userHands.Drop(hand);
+            hands.TryPickupEntity(hand, item!.Owner, checkActionBlocker: false);
             UpdateSubscribed();
         }
 

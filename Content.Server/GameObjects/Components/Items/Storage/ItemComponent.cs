@@ -1,6 +1,7 @@
 #nullable enable
 using Content.Server.GameObjects.Components.GUI;
 using Content.Server.Interfaces.GameObjects.Components.Items;
+using Content.Shared.GameObjects.Components.Items;
 using Content.Shared.GameObjects.Components.Storage;
 using Content.Shared.GameObjects.EntitySystems.ActionBlocker;
 using Content.Shared.GameObjects.Verbs;
@@ -31,23 +32,6 @@ namespace Content.Server.GameObjects.Components.Items.Storage
             {
                 component.Visible = false;
             }
-        }
-
-        public override bool TryPutInHand(IEntity user)
-        {
-            if (!CanPickup(user))
-                return false;
-
-            if (!user.TryGetComponent(out IHandsComponent? hands))
-                return false;
-
-            var activeHand = hands.ActiveHand;
-
-            if (activeHand == null)
-                return false;
-
-            hands.PutInHand(this, activeHand, false);
-            return true;
         }
 
         [Verb]

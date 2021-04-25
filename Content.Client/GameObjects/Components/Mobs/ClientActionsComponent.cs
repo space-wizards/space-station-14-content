@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+#nullable enable
+using System.Collections.Generic;
 using Content.Client.GameObjects.Components.HUD.Inventory;
 using Content.Client.GameObjects.Components.Items;
 using Content.Client.GameObjects.Components.Mobs.Actions;
@@ -240,12 +241,19 @@ namespace Content.Client.GameObjects.Components.Mobs
         {
             StopHighlightingItemSlots();
 
+            if (_handsComponent?.Gui == null)
+                return;
+
             // figure out if it's in hand or inventory and highlight it
-            foreach (var hand in _handsComponent!.Hands)
+            foreach (var hand in _handsComponent.Gui.Hands)
             {
-                if (hand.Entity != item || hand.Button == null) continue;
-                _highlightingItemSlots.Add(hand.Button);
-                hand.Button.Highlight(true);
+                var handButton = hand.HandButton;
+                if (hand.HeldItem != item || handButton == null)
+                    continue;
+
+                _highlightingItemSlots.Add(handButton);
+                handButton.Highlight(true);
+
                 return;
             }
 

@@ -111,7 +111,7 @@ namespace Content.Server.GameObjects.Components.ActionBlocking
             }
 
             Container.Insert(handcuff);
-            CanStillInteract = Owner.TryGetComponent(out HandsComponent? ownerHands) && ownerHands.Hands.Count() > CuffedHandCount;
+            CanStillInteract = Owner.TryGetComponent(out HandsComponent? ownerHands) && ownerHands.HandNames.Count() > CuffedHandCount;
 
             OnCuffedStateChanged?.Invoke();
             UpdateAlert();
@@ -134,7 +134,7 @@ namespace Content.Server.GameObjects.Components.ActionBlocking
             if (!Owner.TryGetComponent(out HandsComponent? handsComponent)) return;
 
             var itemCount = handsComponent.GetAllHeldItems().Count();
-            var freeHandCount = handsComponent.Hands.Count() - CuffedHandCount;
+            var freeHandCount = handsComponent.HandNames.Count() - CuffedHandCount;
 
             if (freeHandCount < itemCount)
             {
@@ -276,7 +276,7 @@ namespace Content.Server.GameObjects.Components.ActionBlocking
                     }
                 }
 
-                CanStillInteract = Owner.TryGetComponent(out HandsComponent? handsComponent) && handsComponent.Hands.Count() > CuffedHandCount;
+                CanStillInteract = Owner.TryGetComponent(out HandsComponent? handsComponent) && handsComponent.HandNames.Count() > CuffedHandCount;
                 OnCuffedStateChanged?.Invoke();
                 UpdateAlert();
                 Dirty();

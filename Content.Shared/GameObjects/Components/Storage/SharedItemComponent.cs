@@ -1,4 +1,5 @@
 #nullable enable
+using Content.Shared.GameObjects.Components.Items;
 using Content.Shared.GameObjects.EntitySystems;
 using Content.Shared.GameObjects.EntitySystems.ActionBlocker;
 using Content.Shared.Interfaces.GameObjects.Components;
@@ -135,14 +136,22 @@ namespace Content.Shared.GameObjects.Components.Storage
 
         bool IInteractHand.InteractHand(InteractHandEventArgs eventArgs)
         {
-            return TryPutInHand(eventArgs.User);
-        }
+            var user = eventArgs.User;
 
-        /// <summary>
-        ///     Tries to put this item in a player's hands.
-        ///     TODO: Move server implementation here once hands are in shared.
-        /// </summary>
-        public abstract bool TryPutInHand(IEntity user);
+            if (!CanPickup(user))
+                return false;
+
+            if (!user.TryGetComponent(out SharedHandsComponent? hands))
+                return false;
+
+            var activeHand = hands.ActiveHand;
+
+            if (activeHand == null)
+                return false;
+
+            hands.TryPickupEntityToActiveHand(Owner);
+            return true;
+        }
 
         protected virtual void OnEquippedPrefixChange() { }
 
