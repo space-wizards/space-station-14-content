@@ -21,7 +21,7 @@ namespace Content.Shared.GameObjects.Components.Surgery.Operation.Step
 
         public bool Necessary(SurgeryTargetComponent target)
         {
-            return Conditional?.Necessary(target) ?? false;
+            return Conditional?.Necessary(target) ?? true;
         }
     }
 }

@@ -122,7 +122,7 @@ namespace Content.Shared.GameObjects.Components.Surgery.Target
             }
 
             var nextStep = Operation.Steps[_surgeryTags.Count];
-            if (!nextStep.Necessary(this) || nextStep.Id != tag)
+            if (!nextStep.Necessary(this) || nextStep.Id != tag.Id)
             {
                 return false;
             }
