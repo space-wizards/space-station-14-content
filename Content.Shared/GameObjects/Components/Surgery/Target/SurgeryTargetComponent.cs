@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Content.Shared.GameObjects.Components.Surgery.Operation;
 using Content.Shared.GameObjects.Components.Surgery.Surgeon;
-using Content.Shared.GameObjects.Components.Surgery.Surgeon.ComponentMessages;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
 using Robust.Shared.Players;
@@ -23,20 +22,22 @@ namespace Content.Shared.GameObjects.Components.Surgery.Target
         [DataField("tags")]
         private readonly List<SurgeryTag> _surgeryTags = new();
 
-        private SurgeonComponent? _surgeon;
+        private EntityUid? _surgeon;
 
         [ViewVariables]
-        private SurgeonComponent? Surgeon
+        public SurgeonComponent? Surgeon
         {
-            get => _surgeon;
+            get => _surgeon == null
+                ? null
+                : Owner.EntityManager.GetEntity(_surgeon.Value).GetComponent<SurgeonComponent>();
             set
             {
-                if (_surgeon == value)
+                if (_surgeon == value?.Owner.Uid)
                 {
                     return;
                 }
 
-                _surgeon = value;
+                _surgeon = value?.Owner.Uid;
                 Dirty();
             }
         }
@@ -51,7 +52,7 @@ namespace Content.Shared.GameObjects.Components.Surgery.Target
             get => _operationId == null
                 ? null
                 : _prototypeManager.Index<SurgeryOperationPrototype>(_operationId);
-            private set
+            set
             {
                 if (_operationId == value?.ID)
                 {
@@ -69,7 +70,7 @@ namespace Content.Shared.GameObjects.Components.Surgery.Target
 
         public override ComponentState GetComponentState(ICommonSession player)
         {
-            return new SurgeryTargetComponentState(_surgeon?.Owner.Uid, _operationId);
+            return new SurgeryTargetComponentState(_surgeon, _operationId);
         }
 
         public override void HandleComponentState(ComponentState? curState, ComponentState? nextState)
@@ -83,34 +84,13 @@ namespace Content.Shared.GameObjects.Components.Surgery.Target
 
             _surgeon = state.Surgeon == null
                 ? null
-                : Owner.EntityManager.GetEntity(state.Surgeon.Value).EnsureComponent<SurgeonComponent>();
+                : Owner.EntityManager
+                    .GetEntity(state.Surgeon.Value)
+                    .EnsureComponent<SurgeonComponent>()
+                    .Owner
+                    .Uid;
 
             _operationId = state.Operation;
-        }
-
-        public override void HandleMessage(ComponentMessage message, IComponent? component)
-        {
-            base.HandleMessage(message, component);
-
-            switch (message)
-            {
-                case SurgeonStartedOperationComponentMessage msg:
-                    Surgeon = msg.Surgeon;
-                    Operation = msg.Operation;
-                    break;
-                case SurgeonStoppedOperationComponentMessage:
-                    Surgeon = null;
-                    Operation = null;
-                    break;
-            }
-        }
-
-        public override void OnRemove()
-        {
-            var message = new SurgeryTargetComponentRemovedMessage();
-            Owner.EntityManager.EventBus.RaiseLocalEvent(Owner.Uid, message);
-
-            base.OnRemove();
         }
 
         public bool CanAddSurgeryTag(SurgeryTag tag)

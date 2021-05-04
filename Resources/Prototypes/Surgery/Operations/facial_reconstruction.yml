@@ -9,5 +9,5 @@
   - VesselCompression
   - Cauterization
   effect:
-    !type:FacialReconstructionOperation
+    !type:FacialReconstructionEffect
   hidden: true # TODO SURGERY

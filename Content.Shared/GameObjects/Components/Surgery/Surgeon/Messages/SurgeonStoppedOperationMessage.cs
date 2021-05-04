@@ -5,11 +5,11 @@ namespace Content.Shared.GameObjects.Components.Surgery.Surgeon.Messages
 {
     public class SurgeonStoppedOperationMessage : EntityEventArgs
     {
-        public SurgeonStoppedOperationMessage(SurgeryTargetComponent oldOperatingOn)
+        public SurgeonStoppedOperationMessage(SurgeryTargetComponent oldTarget)
         {
-            OldOperatingOn = oldOperatingOn;
+            OldTarget = oldTarget;
         }
 
-        public SurgeryTargetComponent OldOperatingOn { get; }
+        public SurgeryTargetComponent OldTarget { get; }
     }
 }

@@ -7,5 +7,5 @@
   - FixOVein
   - Cauterization
   effect:
-    !type:ArteryRepairOperation
+    !type:ArteryRepairEffect
   hidden: true # TODO SURGERY

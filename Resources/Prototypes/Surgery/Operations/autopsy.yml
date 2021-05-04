@@ -6,5 +6,5 @@
   - Incision
   - Autopsy
   effect:
-    !type:AutopsyOperation
+    !type:AutopsyEffect
   hidden: true # TODO SURGERY

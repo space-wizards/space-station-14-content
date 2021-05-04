@@ -2,11 +2,11 @@
 
 namespace Content.Shared.GameObjects.Components.Surgery.Operation.Effect
 {
-    public class AutopsyOperation : IOperationEffect
+    public class LimbReplacementEffect : IOperationEffect
     {
         public void Execute(SurgeryTargetComponent target)
         {
-            // TODO SURGERY
+            // target.Owner.GetComponentOrNull<IBody>()?.
         }
     }
 }

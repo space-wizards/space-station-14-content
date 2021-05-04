@@ -13,5 +13,5 @@
   - BoneGel
   - Cauterization
   effect:
-    !type:ObjectInsertionOperation
+    !type:ObjectInsertionEffect
   hidden: true # TODO SURGERY

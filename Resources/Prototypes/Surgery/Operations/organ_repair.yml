@@ -11,5 +11,5 @@
   - BoneGel
   - Cauterization
   effect:
-    !type:OrganRepairOperation
+    !type:OrganRepairEffect
   hidden: true # TODO SURGERY

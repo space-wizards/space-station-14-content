@@ -8,4 +8,4 @@
   - Retraction
   - Amputation
   effect:
-    !type:AmputationOperation
+    !type:AmputationEffect

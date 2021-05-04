@@ -7,6 +7,7 @@ using Content.Shared.GameObjects.Components.Surgery.Operation;
 using Content.Shared.GameObjects.Components.Surgery.Surgeon;
 using Content.Shared.GameObjects.Components.Surgery.Target;
 using Content.Shared.GameObjects.Components.Surgery.UI;
+using Content.Shared.GameObjects.EntitySystems;
 using Content.Shared.Interfaces;
 using Content.Shared.Interfaces.GameObjects.Components;
 using Robust.Server.GameObjects;
@@ -31,6 +32,8 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
         private ISawmill _sawmill = default!;
 
         [ViewVariables] private BoundUserInterface? UserInterface => Owner.GetUIOrNull(SurgeryUIKey.Key);
+
+        private SharedSurgerySystem SurgerySystem => EntitySystem.Get<SharedSurgerySystem>();
 
         public override void Initialize()
         {
@@ -67,7 +70,8 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
                         ("user", surgeon),
                         ("item", Owner),
                         ("part", target),
-                        ("procedure", operation.Name)), except: part.Body.Owner);
+                        ("procedure", operation.Name)),
+                        except: part.Body.Owner);
                 }
                 else
                 {
@@ -105,7 +109,8 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
                         ("user", surgeon),
                         ("item", Owner),
                         ("target", part.Body.Owner),
-                        ("zone", target)), except: part.Body.Owner);
+                        ("zone", target)),
+                        except: part.Body.Owner);
                 }
                 else
                 {
@@ -124,7 +129,8 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
                     surgeon.PopupMessageOtherClients(Loc.GetString(id,
                         ("user", surgeon),
                         ("item", Owner),
-                        ("target", target)), except: target);
+                        ("target", target)),
+                        except: target);
                 }
             }
         }
@@ -181,7 +187,7 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
                         return;
                     }
 
-                    if (!surgeon.TryStartSurgery(target, operation))
+                    if (!SurgerySystem.TryStartSurgery(surgeon, target, operation))
                     {
                         _sawmill.Warning($"Client {message.Session} sent {nameof(SurgeryOpPartSelectUIMsg)} to a start a {msg.OperationId} operation while already performing a {target.Operation?.ID} on {target.Owner}");
                         return;
@@ -231,7 +237,7 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
             if (user.TryGetComponent(out SurgeonComponent? surgeon) &&
                 surgeon.Target?.Owner == target)
             {
-                surgeon.StopSurgery();
+                SurgerySystem.StopSurgery(surgeon);
                 return true;
             }
 

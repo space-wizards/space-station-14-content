@@ -8,5 +8,5 @@
   - LimbAttachment
   - VesselCompression
   effect:
-    !type:LimbReplacementOperation
+    !type:LimbReplacementEffect
   hidden: true # TODO SURGERY

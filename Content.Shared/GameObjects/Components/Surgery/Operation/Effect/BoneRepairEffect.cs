@@ -2,7 +2,7 @@
 
 namespace Content.Shared.GameObjects.Components.Surgery.Operation.Effect
 {
-    public class ObjectInsertionOperation : IOperationEffect
+    public class BoneRepairEffect : IOperationEffect
     {
         public void Execute(SurgeryTargetComponent target)
         {

@@ -7,5 +7,5 @@
   - Retraction
   - Extraction
   effect:
-    !type:OrganExtractionOperation
+    !type:OrganExtractionEffect
   hidden: true # TODO SURGERY

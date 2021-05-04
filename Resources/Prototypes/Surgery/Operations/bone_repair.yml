@@ -9,5 +9,5 @@
   - BoneGel
   - Cauterization
   effect:
-    !type:BoneRepairOperation
+    !type:BoneRepairEffect
   hidden: true # TODO SURGERY

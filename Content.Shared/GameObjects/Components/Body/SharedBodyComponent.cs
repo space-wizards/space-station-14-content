@@ -331,6 +331,11 @@ namespace Content.Shared.GameObjects.Components.Body
                 return true;
             }
 
+            if (slot.Part == null)
+            {
+                return false;
+            }
+
             searched.Add(slot);
 
             foreach (var connection in slot.Connections)
