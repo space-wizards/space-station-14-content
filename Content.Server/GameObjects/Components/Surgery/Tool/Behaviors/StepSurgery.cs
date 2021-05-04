@@ -3,7 +3,9 @@ using Content.Shared.GameObjects.Components.Body.Part;
 using Content.Shared.GameObjects.Components.Surgery.Operation.Step;
 using Content.Shared.GameObjects.Components.Surgery.Surgeon;
 using Content.Shared.GameObjects.Components.Surgery.Target;
+using Content.Shared.GameObjects.EntitySystems;
 using Content.Shared.Interfaces;
+using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.Manager.Attributes;
@@ -13,6 +15,8 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
 {
     public class StepSurgery : SurgeryBehavior
     {
+        private SharedSurgerySystem SurgerySystem => EntitySystem.Get<SharedSurgerySystem>();
+
         [field: DataField("step", customTypeSerializer: typeof(PrototypeIdSerializer<SurgeryStepPrototype>))]
         private string? StepId { get; } = default;
 
@@ -22,7 +26,7 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
 
         public override bool CanPerform(SurgeonComponent surgeon, SurgeryTargetComponent target)
         {
-            return StepId != null && target.CanAddSurgeryTag(StepId);
+            return StepId != null && SurgerySystem.CanAddSurgeryTag(target, StepId);
         }
 
         public override void OnBeginPerformDelay(SurgeonComponent surgeon, SurgeryTargetComponent target)
@@ -56,7 +60,7 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
                 return false;
             }
 
-            if (!target.TryAddSurgeryTag(step.ID))
+            if (!SurgerySystem.TryAddSurgeryTag(target, step.ID))
             {
                 surgeon.Owner.PopupMessage("You see no useful way to do that.");
                 return false;
