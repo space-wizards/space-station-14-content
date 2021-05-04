@@ -18,33 +18,28 @@ namespace Content.Shared.GameObjects.Components.Surgery.Target
         public override string Name => "Surgery";
         public override uint? NetID => ContentNetIDs.SURGERY_TARGET;
 
+        private SurgeonComponent? _surgeon;
+        [ViewVariables] private string? _operationId;
+
         [ViewVariables]
         [DataField("tags")]
-        private readonly List<SurgeryTag> _surgeryTags = new();
-
-        private EntityUid? _surgeon;
+        public List<SurgeryTag> SurgeryTags { get; } = new();
 
         [ViewVariables]
         public SurgeonComponent? Surgeon
         {
-            get => _surgeon == null
-                ? null
-                : Owner.EntityManager.GetEntity(_surgeon.Value).GetComponent<SurgeonComponent>();
+            get => _surgeon;
             set
             {
-                if (_surgeon == value?.Owner.Uid)
+                if (_surgeon == value)
                 {
                     return;
                 }
 
-                _surgeon = value?.Owner.Uid;
+                _surgeon = value;
                 Dirty();
             }
         }
-
-        [ViewVariables]
-        [DataField("current")]
-        private string? _operationId;
 
         [ViewVariables]
         public SurgeryOperationPrototype? Operation
@@ -70,7 +65,7 @@ namespace Content.Shared.GameObjects.Components.Surgery.Target
 
         public override ComponentState GetComponentState(ICommonSession player)
         {
-            return new SurgeryTargetComponentState(_surgeon, _operationId);
+            return new SurgeryTargetComponentState(_surgeon?.Owner.Uid, _operationId);
         }
 
         public override void HandleComponentState(ComponentState? curState, ComponentState? nextState)
@@ -86,89 +81,9 @@ namespace Content.Shared.GameObjects.Components.Surgery.Target
                 ? null
                 : Owner.EntityManager
                     .GetEntity(state.Surgeon.Value)
-                    .EnsureComponent<SurgeonComponent>()
-                    .Owner
-                    .Uid;
+                    .EnsureComponent<SurgeonComponent>();
 
             _operationId = state.Operation;
-        }
-
-        public bool CanAddSurgeryTag(SurgeryTag tag)
-        {
-            if (Operation == null ||
-                Operation.Steps.Count <= _surgeryTags.Count)
-            {
-                return false;
-            }
-
-            var nextStep = Operation.Steps[_surgeryTags.Count];
-            if (!nextStep.Necessary(this) || nextStep.Id != tag.Id)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool TryAddSurgeryTag(SurgeryTag tag)
-        {
-            if (!CanAddSurgeryTag(tag))
-            {
-                return false;
-            }
-
-            _surgeryTags.Add(tag);
-            CheckCompletion();
-
-            return true;
-        }
-
-        public bool HasSurgeryTag(SurgeryTag tag)
-        {
-            return _surgeryTags.Contains(tag);
-        }
-
-        public bool TryRemoveSurgeryTag(SurgeryTag tag)
-        {
-            if (_surgeryTags.Count == 0 ||
-                _surgeryTags[^1] != tag)
-            {
-                return false;
-            }
-
-            _surgeryTags.RemoveAt(_surgeryTags.Count - 1);
-            return true;
-        }
-
-        private void CheckCompletion()
-        {
-            if (Operation == null ||
-                Operation.Steps.Count > _surgeryTags.Count)
-            {
-                return;
-            }
-
-            var offset = 0;
-
-            for (var i = 0; i < _surgeryTags.Count; i++)
-            {
-                var step = Operation.Steps[i + offset];
-
-                if (!step.Necessary(this))
-                {
-                    offset++;
-                    step = Operation.Steps[i + offset];
-                }
-
-                var tag = _surgeryTags[i];
-
-                if (tag != step.Id)
-                {
-                    return;
-                }
-            }
-
-            Operation.Effect?.Execute(this);
         }
     }
 }

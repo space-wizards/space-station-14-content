@@ -1,17 +1,20 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using Content.Shared.GameObjects.Components.Surgery;
 using Content.Shared.GameObjects.Components.Surgery.Operation;
 using Content.Shared.GameObjects.Components.Surgery.Operation.Messages;
 using Content.Shared.GameObjects.Components.Surgery.Operation.Step;
 using Content.Shared.GameObjects.Components.Surgery.Surgeon;
 using Content.Shared.GameObjects.Components.Surgery.Surgeon.Messages;
 using Content.Shared.GameObjects.Components.Surgery.Target;
+using JetBrains.Annotations;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.GameObjects.EntitySystems
 {
+    [UsedImplicitly]
     public class SharedSurgerySystem : EntitySystem
     {
         public const string SurgeryLogId = "surgery";
@@ -25,9 +28,9 @@ namespace Content.Shared.GameObjects.EntitySystems
             ValidateOperations();
 
             SubscribeLocalEvent<SurgeryTargetComponent, ComponentRemove>(HandleTargetComponentRemoved);
-            SubscribeLocalEvent<SurgeonComponent, SurgeonStartedOperationMessage>(HandleSurgeonStartedOperation);
-            SubscribeLocalEvent<SurgeonComponent, SurgeonStoppedOperationMessage>(HandleSurgeonStoppedOperation);
-            SubscribeLocalEvent<SurgeryTargetComponent, OperationEndedMessage>(HandleOperationEnded);
+            SubscribeLocalEvent<SurgeonComponent, SurgeonStartedOperation>(HandleSurgeonStartedOperation);
+            SubscribeLocalEvent<SurgeonComponent, SurgeonStoppedOperation>(HandleSurgeonStoppedOperation);
+            SubscribeLocalEvent<SurgeryTargetComponent, OperationEnded>(HandleOperationEnded);
         }
 
         private void HandleTargetComponentRemoved(EntityUid uid, SurgeryTargetComponent target, ComponentRemove args)
@@ -40,13 +43,13 @@ namespace Content.Shared.GameObjects.EntitySystems
             StopSurgery(target.Surgeon, target);
         }
 
-        private void HandleSurgeonStartedOperation(EntityUid uid, SurgeonComponent surgeon, SurgeonStartedOperationMessage args)
+        private void HandleSurgeonStartedOperation(EntityUid uid, SurgeonComponent surgeon, SurgeonStartedOperation args)
         {
             args.Target.Surgeon = EntityManager.GetEntity(uid).GetComponent<SurgeonComponent>();
             args.Target.Operation = args.Operation;
         }
 
-        private void HandleSurgeonStoppedOperation(EntityUid uid, SurgeonComponent surgeon, SurgeonStoppedOperationMessage args)
+        private void HandleSurgeonStoppedOperation(EntityUid uid, SurgeonComponent surgeon, SurgeonStoppedOperation args)
         {
             surgeon.SurgeryCancellation?.Cancel();
             surgeon.SurgeryCancellation = null;
@@ -56,7 +59,7 @@ namespace Content.Shared.GameObjects.EntitySystems
             args.OldTarget.Surgeon = null;
         }
 
-        private void HandleOperationEnded(EntityUid uid, SurgeryTargetComponent target, OperationEndedMessage args)
+        private void HandleOperationEnded(EntityUid uid, SurgeryTargetComponent target, OperationEnded args)
         {
             target.Surgeon = null;
             target.Operation = null;
@@ -89,7 +92,7 @@ namespace Content.Shared.GameObjects.EntitySystems
             var cancellation = new CancellationTokenSource();
             surgeon.SurgeryCancellation = cancellation;
 
-            var message = new SurgeonStartedOperationMessage(target, operation);
+            var message = new SurgeonStartedOperation(target, operation);
             RaiseLocalEvent(surgeon.Owner.Uid, message);
 
             return cancellation;
@@ -133,7 +136,7 @@ namespace Content.Shared.GameObjects.EntitySystems
             var oldTarget = surgeon.Target;
             surgeon.Target = null;
 
-            var message = new SurgeonStoppedOperationMessage(oldTarget);
+            var message = new SurgeonStoppedOperation(oldTarget);
             RaiseLocalEvent(surgeon.Owner.Uid, message);
 
             return true;
@@ -147,6 +150,79 @@ namespace Content.Shared.GameObjects.EntitySystems
             }
 
             return StopSurgery(surgeon);
+        }
+
+        public bool CanAddSurgeryTag(SurgeryTargetComponent target, SurgeryTag tag)
+        {
+            if (target.Operation == null ||
+                target.Operation.Steps.Count <= target.SurgeryTags.Count)
+            {
+                return false;
+            }
+
+            var nextStep = target.Operation.Steps[target.SurgeryTags.Count];
+            if (!nextStep.Necessary(target) || nextStep.Id != tag.Id)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool TryAddSurgeryTag(SurgeryTargetComponent target, SurgeryTag tag)
+        {
+            if (!CanAddSurgeryTag(target, tag))
+            {
+                return false;
+            }
+
+            target.SurgeryTags.Add(tag);
+            CheckCompletion(target);
+
+            return true;
+        }
+
+        public bool TryRemoveSurgeryTag(SurgeryTargetComponent target, SurgeryTag tag)
+        {
+            if (target.SurgeryTags.Count == 0 ||
+                target.SurgeryTags[^1] != tag)
+            {
+                return false;
+            }
+
+            target.SurgeryTags.RemoveAt(target.SurgeryTags.Count - 1);
+            return true;
+        }
+
+        private void CheckCompletion(SurgeryTargetComponent target)
+        {
+            if (target.Operation == null ||
+                target.Operation.Steps.Count > target.SurgeryTags.Count)
+            {
+                return;
+            }
+
+            var offset = 0;
+
+            for (var i = 0; i < target.SurgeryTags.Count; i++)
+            {
+                var step = target.Operation.Steps[i + offset];
+
+                if (!step.Necessary(target))
+                {
+                    offset++;
+                    step = target.Operation.Steps[i + offset];
+                }
+
+                var tag = target.SurgeryTags[i];
+
+                if (tag != step.Id)
+                {
+                    return;
+                }
+            }
+
+            target.Operation.Effect?.Execute(target);
         }
     }
 }

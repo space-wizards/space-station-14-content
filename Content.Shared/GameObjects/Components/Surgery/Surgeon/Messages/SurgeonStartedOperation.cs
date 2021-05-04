@@ -4,9 +4,9 @@ using Robust.Shared.GameObjects;
 
 namespace Content.Shared.GameObjects.Components.Surgery.Surgeon.Messages
 {
-    public class SurgeonStartedOperationMessage : EntityEventArgs
+    public class SurgeonStartedOperation : EntityEventArgs
     {
-        public SurgeonStartedOperationMessage(SurgeryTargetComponent target, SurgeryOperationPrototype operation)
+        public SurgeonStartedOperation(SurgeryTargetComponent target, SurgeryOperationPrototype operation)
         {
             Target = target;
             Operation = operation;
