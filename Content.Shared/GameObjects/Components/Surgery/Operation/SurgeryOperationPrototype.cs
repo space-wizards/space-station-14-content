@@ -10,22 +10,22 @@ namespace Content.Shared.GameObjects.Components.Surgery.Operation
     [Prototype("surgeryOperation")]
     public class SurgeryOperationPrototype : IPrototype
     {
-        [field: DataField("id", required: true)]
+        [DataField("id", required: true)]
         public string ID { get; } = string.Empty;
 
-        [field: DataField("name")]
+        [DataField("name")]
         public string Name { get; } = string.Empty;
 
-        [field: DataField("description")]
+        [DataField("description")]
         public string Description { get; } = string.Empty;
 
-        [field: DataField("steps", customTypeSerializer: typeof(OperationStepImmutableListSerializer))]
+        [DataField("steps", customTypeSerializer: typeof(OperationStepImmutableListSerializer))]
         public ImmutableList<OperationStep> Steps { get; } = ImmutableList<OperationStep>.Empty;
 
-        [field: DataField("effect", serverOnly: true)]
+        [DataField("effect", serverOnly: true)]
         public IOperationEffect? Effect { get; }
 
-        [field: DataField("hidden")]
+        [DataField("hidden")]
         public bool Hidden { get; }
     }
 }

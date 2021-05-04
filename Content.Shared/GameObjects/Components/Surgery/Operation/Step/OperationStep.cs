@@ -8,10 +8,10 @@ namespace Content.Shared.GameObjects.Components.Surgery.Operation.Step
     [DataDefinition]
     public class OperationStep
     {
-        [field: DataField("id", required: true)]
+        [DataField("id", required: true)]
         public string Id { get; init; } = string.Empty;
 
-        [field: DataField("conditional")]
+        [DataField("conditional")]
         public IOperationStepConditional? Conditional { get; init; }
 
         public SurgeryStepPrototype Step(IPrototypeManager prototypeManager)

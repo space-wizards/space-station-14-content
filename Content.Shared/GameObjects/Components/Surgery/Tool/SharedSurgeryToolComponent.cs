@@ -8,7 +8,7 @@ namespace Content.Shared.GameObjects.Components.Surgery.Tool
     {
         public override string Name => "SurgeryTool";
 
-        [field: DataField("delay")]
+        [DataField("delay")]
         public float Delay { get; } = default!;
     }
 }

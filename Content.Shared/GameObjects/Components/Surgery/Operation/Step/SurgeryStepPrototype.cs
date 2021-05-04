@@ -10,7 +10,7 @@ namespace Content.Shared.GameObjects.Components.Surgery.Operation.Step
     public class SurgeryStepPrototype : IPrototype
     {
         [ViewVariables]
-        [field: DataField("id", required: true)]
+        [DataField("id", required: true)]
         public string ID { get; } = string.Empty;
 
         public string SurgeonBeginPopup(IEntity user, IEntity? target, IEntity part)
