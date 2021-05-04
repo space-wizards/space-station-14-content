@@ -196,7 +196,8 @@ namespace Content.Shared.GameObjects.EntitySystems
 
         private void CheckCompletion(SurgeryTargetComponent target)
         {
-            if (target.Operation == null ||
+            if (target.Surgeon == null ||
+                target.Operation == null ||
                 target.Operation.Steps.Count > target.SurgeryTags.Count)
             {
                 return;
@@ -222,7 +223,7 @@ namespace Content.Shared.GameObjects.EntitySystems
                 }
             }
 
-            target.Operation.Effect?.Execute(target);
+            target.Operation.Effect?.Execute(target.Surgeon, target);
         }
     }
 }

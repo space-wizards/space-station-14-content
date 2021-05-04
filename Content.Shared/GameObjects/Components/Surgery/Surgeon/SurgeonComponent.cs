@@ -1,7 +1,11 @@
 ﻿using System.Threading;
+using Content.Shared.GameObjects.Components.Body;
+using Content.Shared.GameObjects.Components.Body.Mechanism;
+using Content.Shared.GameObjects.Components.Body.Part;
 using Content.Shared.GameObjects.Components.Body.Slot;
 using Content.Shared.GameObjects.Components.Surgery.Target;
 using Robust.Shared.GameObjects;
+using Robust.Shared.Players;
 
 namespace Content.Shared.GameObjects.Components.Surgery.Surgeon
 {
@@ -13,6 +17,7 @@ namespace Content.Shared.GameObjects.Components.Surgery.Surgeon
 
         private SurgeryTargetComponent? _target;
         private BodyPartSlot? _slot;
+        private IMechanism? _mechanism;
 
         public SurgeryTargetComponent? Target
         {
@@ -44,7 +49,32 @@ namespace Content.Shared.GameObjects.Components.Surgery.Surgeon
             }
         }
 
+        public IMechanism? Mechanism
+        {
+            get => _mechanism;
+            set
+            {
+                if (_mechanism == value)
+                {
+                    return;
+                }
+
+                _mechanism = value;
+                Dirty();
+            }
+        }
+
         public CancellationTokenSource? SurgeryCancellation { get; set; }
+
+        public IBody? TargetedBody => _target == null
+            ? null
+            : _target.Owner.GetComponentOrNull<IBody>() ??
+              _target.Owner.GetComponentOrNull<IBodyPart>()?.Body;
+
+        public override ComponentState GetComponentState(ICommonSession player)
+        {
+            return new SurgeonComponentState(_target?.Owner.Uid, _slot?.Id, _mechanism?.Owner.Uid);
+        }
 
         public override void HandleComponentState(ComponentState? curState, ComponentState? nextState)
         {
