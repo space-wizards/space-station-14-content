@@ -53,10 +53,14 @@ namespace Content.Server.GameObjects.Components.Items.Storage
         private int _storageUsed;
         [DataField("capacity")]
         private int _storageCapacityMax = 10000;
+        [DataField("showFillLevel")]
+        private bool _showFillLevel = false;
         public readonly HashSet<IPlayerSession> SubscribedSessions = new();
 
         [DataField("storageSoundCollection")]
         public string? StorageSoundCollection { get; set; }
+
+        [ComponentDependency] private readonly AppearanceComponent? _appearanceComponent = default;
 
         [ViewVariables]
         public override IReadOnlyList<IEntity>? StoredEntities => _storage?.ContainedEntities;
@@ -147,7 +151,7 @@ namespace Content.Server.GameObjects.Components.Items.Storage
                 return;
             }
 
-            PlaySoundCollection(StorageSoundCollection);
+            PlayStorageSound();
             EnsureInitialCalculated();
 
             Logger.DebugS(LoggerName, $"Storage (UID {Owner.Uid}) had entity (UID {message.Entity.Uid}) inserted into it.");
@@ -159,6 +163,7 @@ namespace Content.Server.GameObjects.Components.Items.Storage
             _storageUsed += size;
             _sizeCache[message.Entity] = size;
 
+            UpdateFillLevelVisualizer();
             UpdateClientInventories();
         }
 
@@ -183,7 +188,18 @@ namespace Content.Server.GameObjects.Components.Items.Storage
 
             _storageUsed -= size;
 
+            UpdateFillLevelVisualizer();
             UpdateClientInventories();
+        }
+
+        private void UpdateFillLevelVisualizer()
+        {
+            // update visualizer if needed
+            if (_showFillLevel && _appearanceComponent != null)
+            {
+                var state = new StorageFillLevel(_storageUsed, _storageCapacityMax);
+                _appearanceComponent.SetData(StorageVisuals.FillLevel, state);
+            }
         }
 
         /// <summary>
@@ -243,7 +259,7 @@ namespace Content.Server.GameObjects.Components.Items.Storage
         /// <param name="entity">The entity to open the UI for</param>
         public void OpenStorageUI(IEntity entity)
         {
-            PlaySoundCollection(StorageSoundCollection);
+            PlayStorageSound();
             EnsureInitialCalculated();
 
             var userSession = entity.GetComponent<BasicActorComponent>().playerSession;
@@ -543,7 +559,7 @@ namespace Content.Server.GameObjects.Components.Items.Storage
                 // If we picked up atleast one thing, play a sound and do a cool animation!
                 if (successfullyInserted.Count>0)
                 {
-                    PlaySoundCollection(StorageSoundCollection);
+                    PlayStorageSound();
                     SendNetworkMessage(
                         new AnimateInsertingEntitiesMessage(
                             successfullyInserted,
@@ -614,14 +630,14 @@ namespace Content.Server.GameObjects.Components.Items.Storage
             }
         }
 
-        protected void PlaySoundCollection(string? name)
+        public void PlayStorageSound()
         {
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(StorageSoundCollection))
             {
                 return;
             }
 
-            var file = AudioHelpers.GetRandomFileFromSoundCollection(name);
+            var file = AudioHelpers.GetRandomFileFromSoundCollection(StorageSoundCollection);
             SoundSystem.Play(Filter.Pvs(Owner), file, Owner, AudioParams.Default);
         }
     }
