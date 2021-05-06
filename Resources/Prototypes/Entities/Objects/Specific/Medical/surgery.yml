@@ -35,8 +35,8 @@
   components:
   - type: SurgeryTool
     behavior:
-      !type:StepSurgery
-      step: Cauterization
+      !type:Cauterization
+      locId: cauterization
     delay: 3
   - type: Sprite
     sprite: Objects/Specific/Medical/Surgery/cautery.rsi

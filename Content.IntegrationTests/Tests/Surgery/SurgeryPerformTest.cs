@@ -127,6 +127,70 @@ namespace Content.IntegrationTests.Tests.Surgery
                 Assert.True(sSurgeryTargetComp.Owner.GetComponent<TestAmputationComponent>().Amputated);
             });
         }
+
+        [Test]
+        public async Task CancelOperationTest()
+        {
+            var (_, server) = await StartConnectedServerClientPair(
+                new ClientContentIntegrationOption {ExtraPrototypes = Prototypes},
+                new ServerContentIntegrationOption {ExtraPrototypes = Prototypes});
+
+            var sPlayerManager = server.ResolveDependency<IPlayerManager>();
+            SurgeonComponent sSurgeonComp = default!;
+
+            var sEntityManager = server.ResolveDependency<IEntityManager>();
+            SurgeryTargetComponent sSurgeryTargetComp = default!;
+
+            SurgeryDrapesComponent sDrapesComp = default!;
+
+            SurgeryToolComponent sCauterizationComp = default!;
+
+            var sPrototypeManager = server.ResolveDependency<IPrototypeManager>();
+            SurgeryOperationPrototype sAmputationOperation = default!;
+
+            await server.WaitPost(() =>
+            {
+                var sPlayer = sPlayerManager.GetAllPlayers().Single().AttachedEntity;
+                sSurgeonComp = sPlayer!.EnsureComponent<SurgeonComponent>();
+
+                var coordinates = sPlayer!.Transform.Coordinates;
+                var sTarget = sEntityManager.SpawnEntity(null, coordinates);
+                sSurgeryTargetComp = sTarget.EnsureComponent<SurgeryTargetComponent>();
+
+                var sDrapes = sEntityManager.SpawnEntity(DrapesDummyId, coordinates);
+                sDrapesComp = sDrapes.GetComponent<SurgeryDrapesComponent>();
+
+                sCauterizationComp = sEntityManager
+                    .SpawnEntity(CauteryDummyId, coordinates)
+                    .GetComponent<SurgeryToolComponent>();
+
+                sAmputationOperation = sPrototypeManager.Index<SurgeryOperationPrototype>(TestAmputationOperationId);
+            });
+
+            await server.WaitAssertion(() =>
+            {
+                // No operation underway, cauterization fails
+                Assert.False(sCauterizationComp.Behavior!.CanPerform(sSurgeonComp, sSurgeryTargetComp));
+                Assert.False(sCauterizationComp.Behavior!.Perform(sSurgeonComp, sSurgeryTargetComp));
+
+                // Try to start an amputation operation, succeeds
+                Assert.True(sDrapesComp.TryUse(sSurgeonComp, sSurgeryTargetComp, sAmputationOperation));
+
+                // Try again, fails because an operation is already underway
+                Assert.False(sDrapesComp.TryUse(sSurgeonComp, sSurgeryTargetComp, sAmputationOperation));
+
+                Assert.NotNull(sSurgeonComp.Target);
+                Assert.NotNull(sSurgeonComp.SurgeryCancellation);
+
+                // Operation underway, cauterization succeeds
+                Assert.True(sCauterizationComp.Behavior.CanPerform(sSurgeonComp, sSurgeryTargetComp));
+                Assert.True(sCauterizationComp.Behavior.Perform(sSurgeonComp, sSurgeryTargetComp));
+
+                Assert.Null(sSurgeonComp.Target);
+                Assert.Null(sSurgeonComp.Mechanism);
+                Assert.Null(sSurgeonComp.SurgeryCancellation);
+            });
+        }
     }
 
     [RegisterComponent]

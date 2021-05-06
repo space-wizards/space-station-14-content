@@ -7,6 +7,7 @@
         public const string VesselCompressionDummyId = "VesselCompressionDummy";
         public const string RetractionDummyId = "RetractionDummy";
         public const string AmputationDummyId = "AmputationDummy";
+        public const string CauteryDummyId = "CauteryDummy";
 
         public const string TestAmputationOperationId = "TestAmputation";
         public const string TestAmputationStepId = "TestAmputation";
@@ -15,6 +16,8 @@
         public const string TestIncisionStepId = "TestIncision";
         public const string TestRetractionStepId = "TestRetraction";
         public const string TestVesselCompressionStepId = "TestVesselCompression";
+
+        public const string TestCauterizationId = "TestCauterization";
 
         public const string TestAmputationEffectId = "TestAmputationEffect";
 
@@ -83,6 +86,16 @@
     behavior:
       !type:StepSurgery
       step: {TestRetractionStepId}
+    delay: 0
+
+- type: entity
+  id: {CauteryDummyId}
+  components:
+  - type: Item
+  - type: SurgeryTool
+    behavior:
+      !type:Cauterization
+      step: {TestCauterizationStepId}
     delay: 0
 
 - type: entity

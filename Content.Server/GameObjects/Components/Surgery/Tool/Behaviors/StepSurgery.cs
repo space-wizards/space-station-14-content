@@ -13,7 +13,7 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototy
 
 namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
 {
-    public class StepSurgery : SurgeryBehavior
+    public class StepSurgery : ISurgeryBehavior
     {
         private SharedSurgerySystem SurgerySystem => EntitySystem.Get<SharedSurgerySystem>();
 
@@ -24,12 +24,24 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
             ? null
             : IoCManager.Resolve<IPrototypeManager>().Index<SurgeryStepPrototype>(StepId);
 
-        public override bool CanPerform(SurgeonComponent surgeon, SurgeryTargetComponent target)
+        public bool CanPerform(SurgeonComponent surgeon, SurgeryTargetComponent target)
         {
             return StepId != null && SurgerySystem.CanAddSurgeryTag(target, StepId);
         }
 
-        public override void OnBeginPerformDelay(SurgeonComponent surgeon, SurgeryTargetComponent target)
+        public bool Perform(SurgeonComponent surgeon, SurgeryTargetComponent target)
+        {
+            var step = Step;
+
+            if (step == null)
+            {
+                return false;
+            }
+
+            return SurgerySystem.TryAddSurgeryTag(target, step.ID);
+        }
+
+        public void OnPerformDelayBegin(SurgeonComponent surgeon, SurgeryTargetComponent target)
         {
             var step = Step;
 
@@ -51,19 +63,13 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
             surgeonOwner.PopupMessageOtherClients(step.OutsiderBeginPopup(surgeonOwner, bodyOwner, target.Owner), except: bodyOwner);
         }
 
-        public override bool Perform(SurgeonComponent surgeon, SurgeryTargetComponent target)
+        public void OnPerformSuccess(SurgeonComponent surgeon, SurgeryTargetComponent target)
         {
             var step = Step;
 
             if (step == null)
             {
-                return false;
-            }
-
-            if (!SurgerySystem.TryAddSurgeryTag(target, step.ID))
-            {
-                surgeon.Owner.PopupMessage("You see no useful way to do that.");
-                return false;
+                return;
             }
 
             var surgeonOwner = surgeon.Owner;
@@ -77,8 +83,11 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
             }
 
             surgeonOwner.PopupMessageOtherClients(step.OutsiderSuccessPopup(surgeonOwner, bodyOwner, target.Owner), except: bodyOwner);
+        }
 
-            return true;
+        public void OnPerformFail(SurgeonComponent surgeon, SurgeryTargetComponent target)
+        {
+            surgeon.Owner.PopupMessage("You see no useful way to do that.");
         }
     }
 }

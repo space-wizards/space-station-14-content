@@ -5,7 +5,6 @@ using Content.Shared.GameObjects.Components.Body;
 using Content.Shared.GameObjects.Components.Surgery.Surgeon;
 using Content.Shared.GameObjects.Components.Surgery.Target;
 using Content.Shared.GameObjects.Components.Surgery.Tool;
-using Content.Shared.Interfaces;
 using Content.Shared.Interfaces.GameObjects.Components;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Serialization.Manager.Attributes;
@@ -19,6 +18,23 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
         [field: DataField("behavior")]
         public ISurgeryBehavior? Behavior { get; } = default!;
 
+        private void Perform(SurgeonComponent surgeon, SurgeryTargetComponent target)
+        {
+            if (Behavior == null)
+            {
+                return;
+            }
+
+            if (Behavior.Perform(surgeon, target))
+            {
+                Behavior.OnPerformSuccess(surgeon, target);
+            }
+            else
+            {
+                Behavior.OnPerformFail(surgeon, target);
+            }
+        }
+
         private async Task Use(SurgeonComponent surgeon, SurgeryTargetComponent target)
         {
             if (Behavior == null)
@@ -30,11 +46,11 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
 
             if (Delay <= 0)
             {
-                Behavior.Perform(surgeon, target);
+                Perform(surgeon, target);
                 return;
             }
 
-            Behavior.OnBeginPerformDelay(surgeon, target);
+            Behavior.OnPerformDelayBegin(surgeon, target);
 
             var cancelToken = surgeon.SurgeryCancellation?.Token ?? default;
             var result = await doAfterSystem.DoAfter(new DoAfterEventArgs(surgeon.Owner, Delay, cancelToken, target.Owner)
@@ -48,7 +64,7 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
 
             if (result == DoAfterStatus.Finished)
             {
-                Behavior.Perform(surgeon, target);
+                Perform(surgeon, target);
             }
         }
 
@@ -99,7 +115,7 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
 
             if (!Behavior.CanPerform(surgeon, surgeryTarget))
             {
-                surgeon.Owner.PopupMessage("You see no useful way to do that.");
+                Behavior.OnPerformFail(surgeon, surgeryTarget);
                 return false;
             }
 

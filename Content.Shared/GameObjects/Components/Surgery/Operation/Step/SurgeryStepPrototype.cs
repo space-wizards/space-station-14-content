@@ -13,10 +13,10 @@ namespace Content.Shared.GameObjects.Components.Surgery.Operation.Step
         [DataField("id", required: true)]
         public string ID { get; } = string.Empty;
 
-        public string SurgeonBeginPopup(IEntity user, IEntity? target, IEntity part)
-        {
-            var id = ID.ToLowerInvariant();
+        public string LocId => ID.ToLowerInvariant();
 
+        public static string SurgeonBeginPopup(IEntity user, IEntity? target, IEntity part, string id)
+        {
             if (target == null)
             {
                 var locId = $"surgery-step-{id}-begin-no-zone-surgeon-popup";
@@ -34,17 +34,14 @@ namespace Content.Shared.GameObjects.Components.Surgery.Operation.Step
             }
         }
 
-        public string TargetBeginPopup(IEntity user, IEntity part)
+        public static string TargetBeginPopup(IEntity user, IEntity part, string id)
         {
-            var id = ID.ToLowerInvariant();
             var locId = $"surgery-step-{id}-begin-target-popup";
             return Loc.GetString(locId, ("user", user), ("part", part));
         }
 
-        public string OutsiderBeginPopup(IEntity user, IEntity? target, IEntity part)
+        public static string OutsiderBeginPopup(IEntity user, IEntity? target, IEntity part, string id)
         {
-            var id = ID.ToLowerInvariant();
-
             if (target == null)
             {
                 var locId = $"surgery-step-{id}-begin-no-zone-outsider-popup";
@@ -62,10 +59,8 @@ namespace Content.Shared.GameObjects.Components.Surgery.Operation.Step
             }
         }
 
-        public string SurgeonSuccessPopup(IEntity user, IEntity? target, IEntity part)
+        public static string SurgeonSuccessPopup(IEntity user, IEntity? target, IEntity part, string id)
         {
-            var id = ID.ToLowerInvariant();
-
             if (target == null)
             {
                 var locId = $"surgery-step-{id}-success-no-zone-surgeon-popup";
@@ -83,17 +78,14 @@ namespace Content.Shared.GameObjects.Components.Surgery.Operation.Step
             }
         }
 
-        public string TargetSuccessPopup(IEntity user, IEntity part)
+        public static string TargetSuccessPopup(IEntity user, IEntity part, string id)
         {
-            var id = ID.ToLowerInvariant();
             var locId = $"surgery-step-{id}-success-target-popup";
             return Loc.GetString(locId, ("user", user), ("part", part));
         }
 
-        public string OutsiderSuccessPopup(IEntity user, IEntity? target, IEntity part)
+        public static string OutsiderSuccessPopup(IEntity user, IEntity? target, IEntity part, string id)
         {
-            var id = ID.ToLowerInvariant();
-
             if (target == null)
             {
                 var locId = $"surgery-step-{id}-success-no-zone-outsider-popup";
@@ -109,6 +101,36 @@ namespace Content.Shared.GameObjects.Components.Surgery.Operation.Step
                 var locId = $"surgery-step-{id}-success-outsider-popup";
                 return Loc.GetString(locId, ("user", user), ("target", target), ("part", part));
             }
+        }
+
+        public string SurgeonBeginPopup(IEntity user, IEntity? target, IEntity part)
+        {
+            return SurgeonBeginPopup(user, target, part, LocId);
+        }
+
+        public string TargetBeginPopup(IEntity user, IEntity part)
+        {
+            return TargetBeginPopup(user, part, LocId);
+        }
+
+        public string OutsiderBeginPopup(IEntity user, IEntity? target, IEntity part)
+        {
+            return OutsiderBeginPopup(user, target, part, LocId);
+        }
+
+        public string SurgeonSuccessPopup(IEntity user, IEntity? target, IEntity part)
+        {
+            return SurgeonSuccessPopup(user, target, part, LocId);
+        }
+
+        public string TargetSuccessPopup(IEntity user, IEntity part)
+        {
+            return TargetSuccessPopup(user, part, LocId);
+        }
+
+        public string OutsiderSuccessPopup(IEntity user, IEntity? target, IEntity part)
+        {
+            return OutsiderSuccessPopup(user, target, part, LocId);
         }
     }
 }

@@ -2,7 +2,6 @@
 using Content.Shared.GameObjects.Components.Body;
 using Content.Shared.GameObjects.Components.Body.Mechanism;
 using Content.Shared.GameObjects.Components.Body.Part;
-using Content.Shared.GameObjects.Components.Body.Slot;
 using Content.Shared.GameObjects.Components.Surgery.Target;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Players;
@@ -16,7 +15,6 @@ namespace Content.Shared.GameObjects.Components.Surgery.Surgeon
         public override uint? NetID => ContentNetIDs.SURGEON;
 
         private SurgeryTargetComponent? _target;
-        private BodyPartSlot? _slot;
         private IMechanism? _mechanism;
 
         public SurgeryTargetComponent? Target
@@ -30,21 +28,6 @@ namespace Content.Shared.GameObjects.Components.Surgery.Surgeon
                 }
 
                 _target = value;
-                Dirty();
-            }
-        }
-
-        public BodyPartSlot? Slot
-        {
-            get => _slot;
-            set
-            {
-                if (_slot == value)
-                {
-                    return;
-                }
-
-                _slot = value;
                 Dirty();
             }
         }
@@ -73,7 +56,7 @@ namespace Content.Shared.GameObjects.Components.Surgery.Surgeon
 
         public override ComponentState GetComponentState(ICommonSession player)
         {
-            return new SurgeonComponentState(_target?.Owner.Uid, _slot?.Id, _mechanism?.Owner.Uid);
+            return new SurgeonComponentState(_target?.Owner.Uid, _mechanism?.Owner.Uid);
         }
 
         public override void HandleComponentState(ComponentState? curState, ComponentState? nextState)

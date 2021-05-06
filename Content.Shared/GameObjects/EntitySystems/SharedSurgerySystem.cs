@@ -54,7 +54,6 @@ namespace Content.Shared.GameObjects.EntitySystems
             surgeon.SurgeryCancellation?.Cancel();
             surgeon.SurgeryCancellation = null;
             surgeon.Target = null;
-            surgeon.Slot = null;
 
             args.OldTarget.Surgeon = null;
         }
