@@ -39,16 +39,16 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
             }
 
             var surgeonOwner = surgeon.Owner;
-            var targetOwner = target.Owner.GetComponentOrNull<IBodyPart>()?.Body?.Owner ?? target.Owner;
+            var bodyOwner = target.Owner.GetComponentOrNull<IBodyPart>()?.Body?.Owner ?? target.Owner;
 
-            surgeonOwner.PopupMessage(step.SurgeonBeginPopup(surgeonOwner, targetOwner, targetOwner));
+            surgeonOwner.PopupMessage(step.SurgeonBeginPopup(surgeonOwner, bodyOwner, target.Owner));
 
-            if (targetOwner != surgeonOwner)
+            if (bodyOwner != surgeonOwner)
             {
-                targetOwner.PopupMessage(step.TargetBeginPopup(surgeonOwner, targetOwner));
+                bodyOwner.PopupMessage(step.TargetBeginPopup(surgeonOwner, bodyOwner));
             }
 
-            surgeonOwner.PopupMessageOtherClients(step.OutsiderBeginPopup(surgeonOwner, targetOwner, targetOwner), except: targetOwner);
+            surgeonOwner.PopupMessageOtherClients(step.OutsiderBeginPopup(surgeonOwner, bodyOwner, target.Owner), except: bodyOwner);
         }
 
         public override bool Perform(SurgeonComponent surgeon, SurgeryTargetComponent target)
@@ -67,16 +67,16 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool.Behaviors
             }
 
             var surgeonOwner = surgeon.Owner;
-            var targetOwner = target.Owner.GetComponentOrNull<IBodyPart>()?.Body?.Owner ?? target.Owner;
+            var bodyOwner = target.Owner.GetComponentOrNull<IBodyPart>()?.Body?.Owner ?? target.Owner;
 
-            surgeonOwner.PopupMessage(step.SurgeonSuccessPopup(surgeonOwner, targetOwner, targetOwner));
+            surgeonOwner.PopupMessage(step.SurgeonSuccessPopup(surgeonOwner, bodyOwner, target.Owner));
 
-            if (targetOwner != surgeonOwner)
+            if (bodyOwner != surgeonOwner)
             {
-                targetOwner.PopupMessage(step.TargetSuccessPopup(surgeonOwner, targetOwner));
+                bodyOwner.PopupMessage(step.TargetSuccessPopup(surgeonOwner, bodyOwner));
             }
 
-            surgeonOwner.PopupMessageOtherClients(step.OutsiderSuccessPopup(surgeonOwner, targetOwner, targetOwner), except: targetOwner);
+            surgeonOwner.PopupMessageOtherClients(step.OutsiderSuccessPopup(surgeonOwner, bodyOwner, target.Owner), except: bodyOwner);
 
             return true;
         }

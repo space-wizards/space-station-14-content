@@ -62,7 +62,7 @@ namespace Content.IntegrationTests.Tests.Surgery
                     var id = operation.ID.ToLowerInvariant();
                     var args = new (string, object)[] {("user", surgeon), ("target", target), ("part", part), ("item", item)};
 
-                    // Begin
+                    // - Begin
                     var beginId = $"surgery-step-{id}-begin";
 
                     // Surgeon
@@ -79,7 +79,7 @@ namespace Content.IntegrationTests.Tests.Surgery
                     AddIfMissing(sLoc, $"{beginId}-no-zone-outsider-popup", missing, args);
 
 
-                    // Success
+                    // - Success
                     var successId = $"surgery-step-{id}-success";
 
                     // Surgeon

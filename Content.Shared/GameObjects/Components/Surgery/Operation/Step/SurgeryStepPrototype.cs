@@ -68,17 +68,17 @@ namespace Content.Shared.GameObjects.Components.Surgery.Operation.Step
 
             if (target == null)
             {
-                var locId = $"step-surgery-{id}-success-no-zone-surgeon-popup";
+                var locId = $"surgery-step-{id}-success-no-zone-surgeon-popup";
                 return Loc.GetString(locId, ("user", user), ("part", part));
             }
             else if (user == target)
             {
-                var locId = $"step-surgery-{id}-success-self-surgeon-popup";
+                var locId = $"surgery-step-{id}-success-self-surgeon-popup";
                 return Loc.GetString(locId, ("user", user), ("target", target), ("part", part));
             }
             else
             {
-                var locId = $"step-surgery-{id}-success-surgeon-popup";
+                var locId = $"surgery-step-{id}-success-surgeon-popup";
                 return Loc.GetString(locId, ("user", user), ("target", target), ("part", part));
             }
         }
