@@ -122,6 +122,16 @@ namespace Content.Shared.GameObjects.EntitySystems
             return TryStartSurgery(surgeon, target, operation, out _);
         }
 
+        public bool IsPerformingSurgery(SurgeonComponent surgeon)
+        {
+            return surgeon.Target != null;
+        }
+
+        public bool IsPerformingSurgeryOn(SurgeonComponent surgeon, SurgeryTargetComponent target)
+        {
+            return surgeon.Target == target;
+        }
+
         /// <summary>
         ///     Tries to stop the surgery that the surgeon is performing.
         /// </summary>

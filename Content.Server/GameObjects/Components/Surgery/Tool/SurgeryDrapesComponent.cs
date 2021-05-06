@@ -152,6 +152,17 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
             return false;
         }
 
+        public bool TryUse(SurgeonComponent surgeon, SurgeryTargetComponent target, SurgeryOperationPrototype operation)
+        {
+            if (!SurgerySystem.TryStartSurgery(surgeon, target, operation))
+            {
+                return false;
+            }
+
+            DoPopups(surgeon.Owner, target.Owner, operation);
+            return true;
+        }
+
         private void OnUIMessage(ServerBoundUserInterfaceMessage message)
         {
             switch (message.Message)
@@ -187,13 +198,13 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
                         return;
                     }
 
-                    if (!SurgerySystem.TryStartSurgery(surgeon, target, operation))
+                    if (SurgerySystem.IsPerformingSurgeryOn(surgeon, target))
                     {
                         _sawmill.Warning($"Client {message.Session} sent {nameof(SurgeryOpPartSelectUIMsg)} to a start a {msg.OperationId} operation while already performing a {target.Operation?.ID} on {target.Owner}");
                         return;
                     }
 
-                    DoPopups(surgeon.Owner, target.Owner, operation);
+                    TryUse(surgeon, target, operation);
                     break;
             }
         }
