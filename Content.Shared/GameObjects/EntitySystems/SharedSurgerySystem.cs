@@ -56,6 +56,8 @@ namespace Content.Shared.GameObjects.EntitySystems
             surgeon.Target = null;
 
             args.OldTarget.Surgeon = null;
+            args.OldTarget.Operation = null;
+            args.OldTarget.SurgeryTags.Clear();
         }
 
         private void HandleOperationEnded(EntityUid uid, SurgeryTargetComponent target, OperationEnded args)

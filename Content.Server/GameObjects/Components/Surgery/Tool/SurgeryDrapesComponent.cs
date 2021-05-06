@@ -52,7 +52,7 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
             }
         }
 
-        private void DoPopups(IEntity surgeon, IEntity target, SurgeryOperationPrototype operation)
+        private void DoStartPopups(IEntity surgeon, IEntity target, SurgeryOperationPrototype operation)
         {
             if (SurgeonIsTarget(surgeon, target))
             {
@@ -135,6 +135,84 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
             }
         }
 
+        private void DoCancelPopups(IEntity surgeon, IEntity target)
+        {
+            if (SurgeonIsTarget(surgeon, target))
+            {
+                if (target.TryGetComponent(out IBodyPart? part) &&
+                    part.Body != null)
+                {
+                    var id = "surgery-prepare-cancel-self-surgeon-popup";
+                    target.PopupMessage(surgeon, Loc.GetString(id,
+                        ("item", Owner),
+                        ("zone", target)));
+
+                    id = "surgery-prepare-cancel-self-outsider-popup";
+                    part.Body.Owner.PopupMessageOtherClients(Loc.GetString(id,
+                        ("user", surgeon),
+                        ("item", Owner),
+                        ("part", target)),
+                        except: part.Body.Owner);
+                }
+                else
+                {
+                    var id = "surgery-prepare-cancel-self-no-zone-surgeon-popup";
+                    target.PopupMessage(surgeon, Loc.GetString(id,
+                        ("item", Owner)));
+
+                    id = "surgery-prepare-cancel-self-no-zone-outsider-popup";
+                    target.PopupMessage(surgeon, Loc.GetString(id,
+                        ("user", surgeon),
+                        ("item", Owner)));
+                }
+            }
+            else
+            {
+                if (target.TryGetComponent(out IBodyPart? part) &&
+                    part.Body != null)
+                {
+                    var id = "surgery-prepare-cancel-surgeon-popup";
+                    part.Body.Owner.PopupMessage(surgeon, Loc.GetString(id,
+                        ("item", Owner),
+                        ("target", part.Body.Owner),
+                        ("zone", part.Owner)));
+
+                    id = "surgery-prepare-cancel-target-popup";
+                    surgeon.PopupMessage(part.Body.Owner, Loc.GetString(id,
+                        ("user", surgeon),
+                        ("item", Owner),
+                        ("zone", part.Owner)));
+
+                    id = "surgery-prepare-cancel-outsider-popup";
+                    surgeon.PopupMessageOtherClients(Loc.GetString(id,
+                        ("user", surgeon),
+                        ("item", Owner),
+                        ("target", part.Body.Owner),
+                        ("zone", target)),
+                        except: part.Body.Owner);
+                }
+                else
+                {
+                    var id = "surgery-prepare-cancel-no-zone-surgeon-popup";
+                    target.PopupMessage(surgeon, Loc.GetString(id,
+                        ("item", Owner),
+                        ("target", target)));
+
+                    id = "surgery-prepare-cancel-no-zone-target-popup";
+                    surgeon.PopupMessage(target, Loc.GetString(id,
+                        ("user", surgeon),
+                        ("item", Owner)));
+
+                    id = "surgery-prepare-cancel-no-zone-outsider-popup";
+                    surgeon.PopupMessageOtherClients(Loc.GetString(id,
+                        ("user", surgeon),
+                        ("item", Owner),
+                        ("target", target)),
+                        except: target);
+                }
+            }
+        }
+
         private bool SurgeonIsTarget(IEntity surgeon, IEntity target)
         {
             if (surgeon == target)
@@ -154,13 +232,25 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
 
         public bool TryUse(SurgeonComponent surgeon, SurgeryTargetComponent target, SurgeryOperationPrototype operation)
         {
-            if (!SurgerySystem.TryStartSurgery(surgeon, target, operation))
+            if (SurgerySystem.IsPerformingSurgeryOn(surgeon, target))
             {
+                if (target.SurgeryTags.Count == 0 &&
+                    SurgerySystem.StopSurgery(surgeon, target))
+                {
+                    DoCancelPopups(surgeon.Owner, target.Owner);
+                    return true;
+                }
+
                 return false;
             }
 
-            DoPopups(surgeon.Owner, target.Owner, operation);
-            return true;
+            if (SurgerySystem.TryStartSurgery(surgeon, target, operation))
+            {
+                DoStartPopups(surgeon.Owner, target.Owner, operation);
+                return true;
+            }
+
+            return false;
         }
 
         private void OnUIMessage(ServerBoundUserInterfaceMessage message)
