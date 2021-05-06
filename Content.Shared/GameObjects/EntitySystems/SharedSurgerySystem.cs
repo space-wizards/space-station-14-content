@@ -146,8 +146,11 @@ namespace Content.Shared.GameObjects.EntitySystems
             var oldTarget = surgeon.Target;
             surgeon.Target = null;
 
-            var message = new SurgeonStoppedOperation(oldTarget);
-            RaiseLocalEvent(surgeon.Owner.Uid, message);
+            if (!surgeon.Owner.Deleted)
+            {
+                var message = new SurgeonStoppedOperation(oldTarget);
+                RaiseLocalEvent(surgeon.Owner.Uid, message);
+            }
 
             return true;
         }
