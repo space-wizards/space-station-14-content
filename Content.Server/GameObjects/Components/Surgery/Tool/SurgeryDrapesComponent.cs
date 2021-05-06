@@ -198,6 +198,7 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
                         return;
                     }
 
+                    // TODO SURGERY: Make each surgeon "know" a set of surgeries that they may perform
                     if (operation.Hidden)
                     {
                         _sawmill.Warning(
