@@ -198,6 +198,13 @@ namespace Content.Server.GameObjects.Components.Surgery.Tool
                         return;
                     }
 
+                    if (operation.Hidden)
+                    {
+                        _sawmill.Warning(
+                            $"Client {message.Session} sent {nameof(SurgeryOpPartSelectUIMsg)} that tried to start a hidden {nameof(SurgeryOperationPrototype)} with id: {msg.OperationId}");
+                        return;
+                    }
+
                     if (SurgerySystem.IsPerformingSurgeryOn(surgeon, target))
                     {
                         _sawmill.Warning($"Client {message.Session} sent {nameof(SurgeryOpPartSelectUIMsg)} to a start a {msg.OperationId} operation while already performing a {target.Operation?.ID} on {target.Owner}");
