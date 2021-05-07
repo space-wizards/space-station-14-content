@@ -17,10 +17,6 @@ namespace Content.Shared.GameObjects.Components.Body.Mechanism
     {
         public override string Name => "Mechanism";
 
-        protected readonly Dictionary<int, object> OptionsCache = new();
-        protected IBody? BodyCache;
-        protected int IdHash;
-        protected IEntity? PerformerCache;
         private IBodyPart? _part;
 
         [DataField("behaviors", serverOnly: true)] private HashSet<IMechanismBehavior> _behaviorTypes = new();
@@ -76,7 +72,6 @@ namespace Content.Shared.GameObjects.Components.Body.Mechanism
 
         [DataField("destroyThreshold")] public int DestroyThreshold { get; set; } = -10;
 
-        // TODO BODY: Surgery description and adding a message to the examine tooltip of the entity that owns this mechanism
         // TODO BODY
         [DataField("resistance")] public int Resistance { get; set; } = 0;
 

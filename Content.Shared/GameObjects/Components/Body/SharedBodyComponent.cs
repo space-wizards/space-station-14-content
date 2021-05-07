@@ -242,6 +242,14 @@ namespace Content.Shared.GameObjects.Components.Body
             return SlotParts.ContainsKey(part);
         }
 
+        public bool HasPart(IEntity part)
+        {
+            DebugTools.AssertNotNull(part);
+
+            return part.TryGetComponent(out IBodyPart? partComponent) &&
+                   HasPart(partComponent);
+        }
+
         public bool RemovePart(IBodyPart part)
         {
             DebugTools.AssertNotNull(part);
@@ -321,6 +329,11 @@ namespace Content.Shared.GameObjects.Components.Body
             if (slot.Part == CenterPart)
             {
                 return true;
+            }
+
+            if (slot.Part == null)
+            {
+                return false;
             }
 
             searched.Add(slot);

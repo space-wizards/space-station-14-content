@@ -45,6 +45,8 @@ namespace Content.Shared.GameObjects.Components.Body.Slot
         [ViewVariables]
         public HashSet<BodyPartSlot> Connections { get; private set; }
 
+        public bool HasStump { get; set; }
+
         public event Action<IBodyPart>? PartAdded;
 
         public event Action<IBodyPart>? PartRemoved;

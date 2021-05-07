@@ -1,4 +1,5 @@
-﻿using Content.Shared.Interfaces;
+﻿using System.Collections.Generic;
+using Content.Shared.Interfaces;
 using Robust.Server.Player;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
@@ -20,22 +21,27 @@ namespace Content.Server.Utility
         /// <param name="range">
         ///     The range in which to search for players, defaulting to one screen.
         /// </param>
-        public static void PopupMessageOtherClients(this IEntity source, string message, IPlayerManager? playerManager = null, int range = 15)
+        /// <param name="except">
+        ///     An array of entities to not popup the message for.
+        /// </param>
+        public static void PopupMessageOtherClients(this IEntity source, string message, IPlayerManager? playerManager = null, int range = 15, params IEntity[] except)
         {
             playerManager ??= IoCManager.Resolve<IPlayerManager>();
 
             var viewers = playerManager.GetPlayersInRange(source.Transform.Coordinates, range);
+            var exceptSet = new HashSet<IEntity>(except) {source};
 
             foreach (var viewer in viewers)
             {
                 var viewerEntity = viewer.AttachedEntity;
 
-                if (viewerEntity == null || source == viewerEntity || viewer.AttachedEntity == null)
+                if (viewerEntity == null ||
+                    exceptSet.Contains(viewerEntity))
                 {
                     continue;
                 }
 
-                source.PopupMessage(viewer.AttachedEntity, message);
+                source.PopupMessage(viewerEntity, message);
             }
         }
 

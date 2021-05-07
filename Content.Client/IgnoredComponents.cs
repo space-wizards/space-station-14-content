@@ -109,7 +109,6 @@ namespace Content.Client
             "Wire",
             "StressTestMovement",
             "Toys",
-            "SurgeryTool",
             "EmitSoundOnThrow",
             "Flash",
             "DamageOnToolInteract",
@@ -221,7 +220,6 @@ namespace Content.Client
             "MachineFrame",
             "MachineBoard",
             "ChemicalAmmo",
-            "BiologicalSurgeryData",
             "CargoTelepad",
             "TraitorDeathMatchRedemption",
             "GlassBeaker",
@@ -254,6 +252,8 @@ namespace Content.Client
             "DisassembleOnActivate",
             "ExplosionLaunched",
             "Advertise",
+            "SurgeryTool",
+            "SurgeryDrapes",
         };
     }
 }

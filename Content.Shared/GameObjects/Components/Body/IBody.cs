@@ -15,7 +15,7 @@ namespace Content.Shared.GameObjects.Components.Body
     ///     Component representing a collection of <see cref="IBodyPart"/>s
     ///     attached to each other.
     /// </summary>
-    public interface IBody : IComponent, IBodyPartContainer
+    public interface IBody : IComponent
     {
         /// <summary>
         ///     The <see cref="BodyTemplatePrototype"/> used to create this
@@ -103,6 +103,16 @@ namespace Content.Shared.GameObjects.Components.Body
         ///     false otherwise.
         /// </returns>
         bool HasPart(IBodyPart part);
+
+        /// <summary>
+        ///     Checks if this <see cref="IBody"/> contains the given <see cref="part"/>.
+        /// </summary>
+        /// <param name="part">The part entity to look for.</param>
+        /// <returns>
+        ///     true if the given <see cref="part"/> is attached to the body,
+        ///     false otherwise.
+        /// </returns>
+        bool HasPart(IEntity part);
 
         /// <summary>
         ///     Removes the given <see cref="IBodyPart"/> from this body,

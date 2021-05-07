@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Content.Shared.GameObjects.Components.Body.Mechanism;
-using Content.Shared.GameObjects.Components.Body.Surgery;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
 using Robust.Shared.Map;
 using Robust.Shared.Players;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 using Robust.Shared.Serialization.Manager.Attributes;
 using Robust.Shared.Utility;
@@ -17,6 +17,8 @@ namespace Content.Shared.GameObjects.Components.Body.Part
 {
     public abstract class SharedBodyPartComponent : Component, IBodyPart
     {
+        [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
+
         public override string Name => "BodyPart";
 
         public override uint? NetID => ContentNetIDs.BODY_PART;
@@ -69,7 +71,6 @@ namespace Content.Shared.GameObjects.Components.Body.Part
         [ViewVariables] public int SizeUsed { get; private set; }
 
         // TODO BODY size used
-        // TODO BODY surgerydata
 
         /// <summary>
         ///     What types of BodyParts this <see cref="IBodyPart"/> can easily attach to.
@@ -99,9 +100,6 @@ namespace Content.Shared.GameObjects.Components.Body.Part
         [ViewVariables]
         [DataField("symmetry")]
         public BodyPartSymmetry Symmetry { get; private set; } = BodyPartSymmetry.None;
-
-        [ViewVariables]
-        public ISurgeryData? SurgeryDataComponent => Owner.GetComponentOrNull<ISurgeryData>();
 
         protected virtual void OnAddMechanism(IMechanism mechanism)
         {
@@ -169,40 +167,18 @@ namespace Content.Shared.GameObjects.Components.Body.Part
             }
         }
 
-        public bool SurgeryCheck(SurgeryType surgery)
-        {
-            return SurgeryDataComponent?.CheckSurgery(surgery) ?? false;
-        }
-
-        /// <summary>
-        ///     Attempts to perform surgery on this <see cref="IBodyPart"/> with the given
-        ///     tool.
-        /// </summary>
-        /// <returns>True if successful, false if there was an error.</returns>
-        public bool AttemptSurgery(SurgeryType toolType, IBodyPartContainer target, ISurgeon surgeon, IEntity performer)
-        {
-            DebugTools.AssertNotNull(toolType);
-            DebugTools.AssertNotNull(target);
-            DebugTools.AssertNotNull(surgeon);
-            DebugTools.AssertNotNull(performer);
-
-            return SurgeryDataComponent?.PerformSurgery(toolType, target, surgeon, performer) ?? false;
-        }
-
         public bool CanAttachPart(IBodyPart part)
         {
             DebugTools.AssertNotNull(part);
 
-            return SurgeryDataComponent?.CanAttachBodyPart(part) ?? false;
+            return true;
         }
 
         public virtual bool CanAddMechanism(IMechanism mechanism)
         {
             DebugTools.AssertNotNull(mechanism);
 
-            return SurgeryDataComponent != null &&
-                   SizeUsed + mechanism.Size <= Size &&
-                   SurgeryDataComponent.CanAddMechanism(mechanism);
+            return SizeUsed + mechanism.Size <= Size;
         }
 
         /// <summary>
@@ -235,6 +211,11 @@ namespace Content.Shared.GameObjects.Components.Body.Part
             OnAddMechanism(mechanism);
 
             return true;
+        }
+
+        public bool HasMechanism(IMechanism mechanism)
+        {
+            return _mechanisms.Contains(mechanism);
         }
 
         public bool RemoveMechanism(IMechanism mechanism)
