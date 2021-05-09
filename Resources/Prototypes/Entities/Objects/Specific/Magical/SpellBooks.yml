@@ -1,0 +1,18 @@
+- type: entity
+  name: Urban Legends
+  parent: BaseItem
+  id: Debug Spellbook
+  description: 'penned by "Beyond Occult Rituals Typography"'
+  components:
+  - type: Sprite
+    sprite: Objects/Misc/books.rsi
+    state: bookold
+  - type: SpellBook
+    usemessage: You're a wiznred, Garry!
+    spells:
+     - SpellFireball
+     - SpellTraps
+     - SpellCarp
+     - SpellPie
+     - SpellTarget
+     - SpellBarnYardSpeak

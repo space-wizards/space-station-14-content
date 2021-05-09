@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 namespace Content.Shared.Actions
 {
     /// <summary>
@@ -17,7 +17,13 @@ namespace Content.Shared.Actions
         DebugTargetPoint,
         DebugTargetPointRepeat,
         DebugTargetEntity,
-        DebugTargetEntityRepeat
+        DebugTargetEntityRepeat,
+        SpellFireball,
+        SpellTraps,
+        SpellCarp,
+        SpellPie,
+        SpellTarget,
+        SpellBarnYardSpeak
     }
 
     /// <summary>

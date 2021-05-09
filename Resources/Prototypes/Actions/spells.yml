@@ -1,0 +1,90 @@
+﻿- type: action
+  actionType: SpellFireball
+  icon: Interface/Actions/Spells/fireball.png
+  name: "Fireball"
+  filters:
+    - spells
+  description: "Puts the fire at your fingertips! And explosive power!"
+  behaviorType: TargetPoint
+  behavior: !type:ProjectileSpell
+   castmessage: ONI SOMA! 
+   spellprojectile: FireBallbullet
+   speed: 15
+   cooldown: 1
+   ignorecaster: true
+
+- type: action
+  actionType: SpellTraps
+  icon: Interface/Actions/Spells/trap.png
+  name: "Traps!"
+  filters:
+    - spells
+  description: "Snare your enemies with a magical trap! Semi-transperent."
+  behaviorType: TargetPoint
+  behavior: !type:ProjectileSpell
+   castmessage: CAVERE INSIDIAS!
+   spellprojectile: TrapsEntitiy
+   speed: 0
+   cooldown: 1
+   ignorecaster: false
+   
+- type: action
+  actionType: SpellCarp
+  icon: Mobs/Aliens/Carps/magic.rsi/icon.png
+  name: "Carps!"
+  filters:
+    - spells
+  description: "Open a portal into space dragon's lair to summon a carp imbued with magic!"
+  behaviorType: TargetPoint
+  behavior: !type:ProjectileSpell
+   castmessage: RI'FATA!
+   spellprojectile:  MagicarpMob_Content
+   range: 2
+   speed: 0
+   cooldown: 1
+   ignorecaster: true
+
+- type: action
+  actionType: SpellTarget
+  icon: Interface/Actions/Spells/pacify.png
+  name: "Pacify"
+  filters:
+    - spells
+  description: "Give your target a hug, so they won't be to harm you!"
+  behaviorType: TargetEntity
+  behavior: !type:TargetSpell
+   castrange: 2
+   castmessage: ASE'N'MRE!
+   cooldown: 1
+   NeedComponent: Mind
+   AddedComponent: MagicPacify
+   duration: 8000
+  
+- type: action
+  actionType: SpellPie
+  icon: Objects/Consumable/Food/Baked/pie.rsi/plain.png
+  name: "Pie"
+  filters:
+    - spells
+  description: "Give me a pie, I dare you!"
+  behaviorType: Instant
+  behavior: !type:InstantSpell
+    spellitem: FoodPieBananaCream
+    castmessage: I NEED A PIE!
+    cooldown: 1
+    castsound: /Audio/Effects/Chemistry/bubbles.ogg
+    
+- type: action
+  actionType: SpellBarnYardSpeak
+  icon: Interface/Actions/Spells/barnyardcurse.png
+  name: "Barnyard curse"
+  filters:
+    - spells
+  description: "Make the target communicate in moos"
+  behaviorType: TargetPoint
+  behavior: !type:ProjectileSpell
+   castmessage: KN'A`FTAGHU,`PUCK`'BTHNK!
+   spellprojectile: BarnYardCurseBolt
+   speed: 30
+   cooldown: 1
+   ignorecaster: true

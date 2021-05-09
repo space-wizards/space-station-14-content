@@ -43,6 +43,7 @@
       - /Audio/Voice/Human/femalescream_5.ogg
     wilhelm: /Audio/Voice/Human/wilhelm_scream.ogg
 
+
 - type: action
   actionType: VoxScream
   icon: Interface/Actions/scream.png

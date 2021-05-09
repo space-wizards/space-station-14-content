@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 using Robust.Shared.GameObjects;
 
 namespace Content.Shared.Actions
@@ -21,6 +21,7 @@ namespace Content.Shared.Actions
     {
         public InstantActionEventArgs(IEntity performer, ActionType actionType) : base(performer, actionType)
         {
+
         }
     }
 }

@@ -1,0 +1,80 @@
+- type: entity
+  id: FireBallbullet
+  name: Fireball
+  parent: BulletRocket
+  abstract: true
+  components:
+  - type: Sprite
+    netsync: false
+    sprite: Objects/Weapons/Guns/Projectiles/fireball.rsi
+    state: fireball
+  - type: ExplosiveProjectile
+  - type: Projectile
+    deleteOnCollide: false
+  - type: Explosive
+    devastationRange: 0
+    heavyImpactRange: 1
+    lightImpactRange: 4
+  - type: Physics
+    bodyType: Dynamic
+    status: InAir
+    fixtures:
+    - shape:
+        !type:PhysShapeAabb
+          bounds: "-0.1,-0.1,0.1,0.1"
+      hard: false
+      mask:
+      - Impassable
+      - MobImpassable
+    linearDamping: 0
+    angularDamping: 0
+
+- type: entity
+  id: TrapsEntitiy
+  name: Trap!
+  parent: BulletBase
+  abstract: true
+  components:
+  - type: Sprite
+    netsync: false
+    sprite: Objects/Weapons/Guns/Projectiles/WizardTrap.rsi
+    state: trap
+  - type: StunnableProjectile
+    stunAmount: 5
+    knockdownAmount: 5
+  - type: PointLight
+    radius: 1
+    color: yellow
+    energy: 0.5
+
+- type: entity
+  id: BarnYardCurseBolt
+  name: BarnYardCurseBolt
+  parent: BulletBase
+  abstract: true
+  components:
+  - type: Sprite
+    netsync: false
+    sprite: Objects/Weapons/Guns/Projectiles/magicboltfizzy.rsi
+    state: magicboltfizzy
+  - type: Physics
+    bodyType: Dynamic
+    status: InAir
+    fixtures:
+    - shape:
+        !type:PhysShapeAabb
+          bounds: "-0.1,-0.1,0.1,0.1"
+      hard: false
+      mask:
+      - Impassable
+      - MobImpassable
+    linearDamping: 0
+    angularDamping: 0
+  - type: MagicalProjectile
+    NeedComponent: Mind
+    AddedComponent: CowAccent
+    duration: 30000
+  - type: Projectile
+    soundHit: /Audio/Weapons/Guns/Hits/bullet_hit.ogg
+    damages:
+      Piercing: 0
